@@ -1,0 +1,73 @@
+<Window x:Class="ReifeschrankTracker.Views.NeuChargeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Neue Charge anlegen"
+        Width="450" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Produktname *" VerticalAlignment="Center" Margin="0,4"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Produktname, UpdateSourceTrigger=PropertyChanged}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Charge-Code" VerticalAlignment="Center" Margin="0,4"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ChargeCode, UpdateSourceTrigger=PropertyChanged}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Methode" VerticalAlignment="Center" Margin="0,4"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MethodenWerte}" SelectedItem="{Binding Methode}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Startdatum/-uhrzeit" VerticalAlignment="Center" Margin="0,4"/>
+                <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding Startdatum}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Startgewicht (g) *" VerticalAlignment="Center" Margin="0,4"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding StartgewichtText, UpdateSourceTrigger=PropertyChanged}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Ziel-Typ" VerticalAlignment="Center" Margin="0,4"/>
+                <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding ZielTypWerte}" SelectedItem="{Binding ZielTyp}" Margin="4,4"/>
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Ziel-% *" VerticalAlignment="Center" Margin="0,4"
+                           Visibility="{Binding IstZielProzent, Converter={StaticResource BoolToVisibility}}"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ZielProzentText, UpdateSourceTrigger=PropertyChanged}" Margin="4,4"
+                         Visibility="{Binding IstZielProzent, Converter={StaticResource BoolToVisibility}}"/>
+
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Zielgewicht (g) *" VerticalAlignment="Center" Margin="0,4"
+                           Visibility="{Binding IstZielGewicht, Converter={StaticResource BoolToVisibility}}"/>
+                <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding ZielGewichtText, UpdateSourceTrigger=PropertyChanged}" Margin="4,4"
+                         Visibility="{Binding IstZielGewicht, Converter={StaticResource BoolToVisibility}}"/>
+
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Notizen" VerticalAlignment="Top" Margin="0,4"/>
+                <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Notizen, UpdateSourceTrigger=PropertyChanged}"
+                         AcceptsReturn="True" Height="60" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="4,4"/>
+            </Grid>
+
+            <TextBlock Text="{Binding Fehler}" Foreground="Red" TextWrapping="Wrap" Margin="0,8,0,0"
+                       Visibility="{Binding Fehler, Converter={StaticResource StringToVisibility}}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Speichern" Width="90" Margin="0,0,8,0" Click="Speichern_Click" IsDefault="True"/>
+            <Button Content="Abbrechen" Width="90" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

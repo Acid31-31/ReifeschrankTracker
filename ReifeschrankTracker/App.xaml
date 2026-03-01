@@ -1,0 +1,11 @@
+<Application x:Class="ReifeschrankTracker.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ReifeschrankTracker.Converters"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <converters:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverse"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
+    </Application.Resources>
+</Application>
