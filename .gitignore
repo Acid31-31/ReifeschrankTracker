@@ -1,0 +1,31 @@
+## .NET build output
+bin/
+obj/
+
+## Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## User-specific files
+*.rsuser
+
+## SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+## NuGet packages
+*.nupkg
+*.snupkg
+[Pp]ackages/
+nuget.config
+
+## Publish output
+publish/
+
+## OS files
+.DS_Store
+Thumbs.db
