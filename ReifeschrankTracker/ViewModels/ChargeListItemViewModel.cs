@@ -24,7 +24,7 @@ public class ChargeListItemViewModel : ViewModelBase
         get
         {
             if (_charge.Messungen.Count == 0 || _charge.StartgewichtG == 0) return 0;
-            var letztes = _charge.Messungen.OrderBy(m => m.Zeitpunkt).Last().GewichtG;
+            var letztes = _charge.Messungen.OrderByDescending(m => m.Zeitpunkt).First().GewichtG;
             return Math.Round((decimal)(_charge.StartgewichtG - letztes) / _charge.StartgewichtG * 100, 1);
         }
     }

@@ -34,6 +34,10 @@ public class NeuChargeViewModel : ViewModelBase
     public IEnumerable<Methode> MethodenWerte => Enum.GetValues<Methode>();
     public IEnumerable<ZielTyp> ZielTypWerte => Enum.GetValues<ZielTyp>();
 
+    private static bool TryParseDecimal(string text, out decimal value)
+        => decimal.TryParse(text.Replace(',', '.'), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out value);
+
     public bool Validieren()
     {
         Fehler = string.Empty;
@@ -41,7 +45,7 @@ public class NeuChargeViewModel : ViewModelBase
         if (!int.TryParse(StartgewichtText, out var g) || g <= 0) { Fehler = "Startgewicht muss eine positive Zahl sein."; return false; }
         if (ZielTyp == ZielTyp.Prozent)
         {
-            if (!decimal.TryParse(ZielProzentText.Replace(',', '.'), System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var p) || p <= 0) { Fehler = "Ziel-% muss eine positive Zahl sein."; return false; }
+            if (!TryParseDecimal(ZielProzentText, out var p) || p <= 0) { Fehler = "Ziel-% muss eine positive Zahl sein."; return false; }
         }
         else
         {
@@ -53,7 +57,7 @@ public class NeuChargeViewModel : ViewModelBase
     public Charge ToCharge()
     {
         int.TryParse(StartgewichtText, out var g);
-        decimal.TryParse(ZielProzentText.Replace(',', '.'), System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var p);
+        TryParseDecimal(ZielProzentText, out var p);
         int.TryParse(ZielGewichtText, out var zg);
         return new Charge
         {

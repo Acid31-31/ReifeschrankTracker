@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace ReifeschrankTracker.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel : ViewModelBase, IDisposable
 {
     private readonly AppDbContext _db;
     private ChargeListItemViewModel? _selectedCharge;
@@ -97,11 +97,12 @@ public class MainViewModel : ViewModelBase
         dlg.Owner = Application.Current.MainWindow;
         if (dlg.ShowDialog() == true)
         {
-            var messung = vm.ToMessung(_selectedCharge.Id);
-            _db.Messungen.Add(messung);
+            var chargeId = _selectedCharge.Id;
+            var messung = vm.ToMessung(chargeId);
 
-            var charge = _db.Chargen.Include(c => c.Messungen).First(c => c.Id == _selectedCharge.Id);
+            var charge = _db.Chargen.Include(c => c.Messungen).First(c => c.Id == chargeId);
             charge.GeaendertAm = DateTime.Now;
+            charge.Messungen.Add(messung);
 
             bool zielErreicht = false;
             if (charge.ZielTyp == ZielTyp.Prozent && charge.ZielProzent.HasValue)
@@ -152,4 +153,6 @@ public class MainViewModel : ViewModelBase
             AusgewählteCharge = null;
         }
     }
+
+    public void Dispose() => _db.Dispose();
 }
