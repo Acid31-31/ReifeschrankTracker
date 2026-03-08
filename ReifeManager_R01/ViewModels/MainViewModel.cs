@@ -1022,6 +1022,11 @@ public class MainViewModel : ObservableObject
 
                 if (manuell)
                 {
+                    MessageBox.Show(
+                        "Keine neue Version verfügbar.\n\nIhre Anwendung ist auf dem aktuellen Stand.",
+                        "✓ Aktuell",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                     Statusmeldung = "✓ Keine neue Version gefunden.";
                 }
 
@@ -1032,15 +1037,18 @@ public class MainViewModel : ObservableObject
             UpdateVerfuegbar = true;
             UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
 
-            var result = MessageBox.Show(
-                $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
-                "Update verfügbar",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Information);
-
-            if (result == MessageBoxResult.Yes)
+            if (manuell)
             {
-                await UpdateStartenAsync();
+                var result = MessageBox.Show(
+                    $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
+                    "Update verfügbar",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    await UpdateStartenAsync();
+                }
             }
         }
         catch (Exception ex)
@@ -1051,6 +1059,11 @@ public class MainViewModel : ObservableObject
 
             if (manuell)
             {
+                MessageBox.Show(
+                    $"Update-Prüfung fehlgeschlagen.\n\n{grund}",
+                    "❌ Fehler",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 Statusmeldung = $"❌ Update-Prüfung fehlgeschlagen: {grund}";
             }
         }
