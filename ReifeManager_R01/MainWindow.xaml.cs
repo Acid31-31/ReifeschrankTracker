@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using ReifeManager_R01.ViewModels;
 
@@ -16,6 +17,33 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel();
+        
+        PreviewMouseWheel += MainWindow_PreviewMouseWheel;
+    }
+
+    private void MainWindow_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        var scrollViewer = FindScrollViewer((DependencyObject)sender);
+        if (scrollViewer != null)
+        {
+            scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - e.Delta / 3.0);
+            e.Handled = true;
+        }
+    }
+
+    private ScrollViewer FindScrollViewer(DependencyObject obj)
+    {
+        if (obj is ScrollViewer sv)
+            return sv;
+
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
+            var result = FindScrollViewer(child);
+            if (result != null)
+                return result;
+        }
+        return null;
     }
 
     private void StueckeGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
