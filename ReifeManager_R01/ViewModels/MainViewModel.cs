@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -32,6 +33,7 @@ public class MainViewModel : ObservableObject
     private UpdateInfo? _verfuegbaresUpdate;
     private readonly ObservableCollection<Fleischstueck> _leereStuecke = new();
     private readonly ObservableCollection<MessEintrag> _leereMessungen = new();
+    private static readonly string AktuelleVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
 
     public ObservableCollection<string> ProfilOptionen { get; }
 
@@ -1014,9 +1016,6 @@ public class MainViewModel : ObservableObject
     {
         try
         {
-            var aktuelleVersion = System.Reflection.Assembly.GetExecutingAssembly()
-                .GetName().Version?.ToString(3) ?? "1.0.0";
-
             var update = await _updateService.PruefeAufUpdateAsync();
             if (update is null)
             {
@@ -1026,7 +1025,7 @@ public class MainViewModel : ObservableObject
                 if (manuell)
                 {
                     MessageBox.Show(
-                        $"Keine neue Version verfügbar.\n\nInstallierte Version: {aktuelleVersion}\n\nIhre Anwendung ist auf dem aktuellen Stand.",
+                        $"Keine neue Version verfügbar.\n\nAktuelle Version: {AktuelleVersion}\n\nIhre Anwendung ist auf dem aktuellen Stand.",
                         "✓ Aktuell",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
@@ -1043,7 +1042,7 @@ public class MainViewModel : ObservableObject
             if (manuell)
             {
                 var result = MessageBox.Show(
-                    $"Es ist eine neue Version verfügbar!\n\nInstallierte Version: {aktuelleVersion}\nNeue Version: {update.Version}\n\nJetzt herunterladen und installieren?",
+                    $"Neue Version verfügbar!\n\nAktuelle Version: {AktuelleVersion}\nNeue Version: {update.Version}\n\nJetzt herunterladen und installieren?",
                     "Update verfügbar",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
@@ -1063,7 +1062,7 @@ public class MainViewModel : ObservableObject
             if (manuell)
             {
                 MessageBox.Show(
-                    $"Update-Prüfung fehlgeschlagen.\n\n{grund}",
+                    $"Update-Prüfung fehlgeschlagen.\n\nAktuelle Version: {AktuelleVersion}\n\n{grund}",
                     "❌ Fehler",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
