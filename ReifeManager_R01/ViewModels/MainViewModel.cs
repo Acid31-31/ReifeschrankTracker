@@ -1015,7 +1015,7 @@ public class MainViewModel : ObservableObject
         try
         {
             var aktuelleVersion = System.Reflection.Assembly.GetExecutingAssembly()
-                .GetName().Version?.ToString() ?? "1.0.0";
+                .GetName().Version?.ToString(3) ?? "1.0.0";
 
             var update = await _updateService.PruefeAufUpdateAsync();
             if (update is null)
