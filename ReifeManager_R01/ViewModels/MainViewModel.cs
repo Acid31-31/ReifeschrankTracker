@@ -1014,7 +1014,9 @@ public class MainViewModel : ObservableObject
     {
         try
         {
+            var aktuelleVersion = UpdateService.HoleAktuelleVersion();
             var update = await _updateService.PruefeAufUpdateAsync();
+            
             if (update is null)
             {
                 UpdateVerfuegbar = false;
@@ -1023,7 +1025,7 @@ public class MainViewModel : ObservableObject
                 if (manuell)
                 {
                     MessageBox.Show(
-                        "Keine neue Version verfügbar.\n\nIhre Anwendung ist auf dem aktuellen Stand.",
+                        $"Keine neue Version verfügbar.\n\nInstallierte Version: v{aktuelleVersion}\n\nIhre Anwendung ist auf dem aktuellen Stand.",
                         "✓ Aktuell",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
@@ -1040,7 +1042,7 @@ public class MainViewModel : ObservableObject
             if (manuell)
             {
                 var result = MessageBox.Show(
-                    $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
+                    $"Es ist eine neue Version verfügbar!\n\nInstallierte Version: v{aktuelleVersion}\nNeue Version: v{update.Version}\n\nJetzt herunterladen und installieren?",
                     "Update verfügbar",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
