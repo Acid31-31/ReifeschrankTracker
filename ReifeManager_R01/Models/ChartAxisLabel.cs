@@ -1,0 +1,8 @@
+namespace ReifeManager_R01.Models;
+
+public class ChartAxisLabel
+{
+    public double X { get; set; }
+    public double Y { get; set; }
+    public string Text { get; set; } = string.Empty;
+}

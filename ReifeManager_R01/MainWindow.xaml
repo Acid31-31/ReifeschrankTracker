@@ -1,0 +1,341 @@
+﻿<Window x:Class="ReifeManager_R01.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="🥩 ReifeManager R01 — Reifeschrank-Verwaltung" Height="900" Width="1400" MinHeight="800" MinWidth="1200"
+        Background="#1E1E1E" Foreground="#F3F3F3" WindowStartupLocation="CenterScreen">
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="330" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <!-- SIDEBAR: Chargen -->
+        <Border Grid.Column="0" Grid.Row="0" Background="#2A2A2A" CornerRadius="8" Padding="14">
+            <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Text="📦 Chargen" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
+                    <TextBlock Text="Neue Charge" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                    <TextBlock Text="Profil" FontSize="12" Opacity="0.85" />
+                    <DockPanel Margin="0,2,0,8">
+                        <ComboBox ItemsSource="{Binding ProfilOptionen}"
+                                  SelectedItem="{Binding AusgewaehltesProfil}"
+                                  Width="180"
+                                  Height="30"
+                                  Background="#333333"
+                                  Foreground="#F3F3F3"
+                                  BorderBrush="#555555" />
+                        <Button Content="Info"
+                                Command="{Binding ProfilInfoAnzeigenCommand}"
+                                Background="#4444AA"
+                                Height="30"
+                                Width="62"
+                                Margin="8,0,0,0" />
+                    </DockPanel>
+                    <TextBlock Text="{Binding ProfilEmpfehlung, StringFormat='Empfohlenes Fleisch: {0}'}" FontSize="12" Opacity="0.9" Foreground="#FFD54F" Margin="0,0,0,8" />
+                    <TextBlock Text="Bezeichnung" FontSize="12" Opacity="0.85" />
+                    <TextBox Text="{Binding NeueBezeichnung, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,8" Height="30" ToolTip="z. B. Coppa März 2026" />
+                    <TextBlock Text="Fleischtyp" FontSize="12" Opacity="0.85" />
+                    <TextBox Text="{Binding NeuerFleischtyp, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,8" Height="30" ToolTip="z. B. Coppa, Pancetta, Schinken" />
+                    <TextBlock Text="Startdatum" FontSize="12" Opacity="0.85" />
+                    <DatePicker SelectedDate="{Binding NeuesStartdatum}" SelectedDateFormat="Short" Margin="0,2,0,8" Height="30" />
+                    <TextBlock Text="Zielverlust %" FontSize="12" Opacity="0.85" />
+                    <TextBox Text="{Binding NeuesZielverlustProzent, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,12" Height="30" ToolTip="z. B. 30" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="✓ Anlegen" Command="{Binding ChargeHinzufuegenCommand}" Height="32" Padding="16,0" Background="#0A84FF" />
+                        <Button Content="✗ Löschen" Command="{Binding ChargeLoeschenCommand}" Height="32" Padding="16,0" Margin="8,0,0,0" Background="#DD3333" />
+                    </StackPanel>
+                </StackPanel>
+
+                <ListBox ItemsSource="{Binding Chargen}" SelectedItem="{Binding SelectedCharge}" Background="#222" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="8" Margin="0,0,0,8" Background="#333" CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Bezeichnung}" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Fleischtyp}" Opacity="0.85" FontSize="12" />
+                                    <TextBlock Text="{Binding Startdatum, StringFormat='📅 {0:dd.MM.yyyy}'}" Opacity="0.75" FontSize="12" />
+                                    <TextBlock Text="{Binding StatusUebersicht}" Foreground="#6EB7FF" FontWeight="SemiBold" FontSize="12" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- DASHBOARD: Haupt-Inhaltsbereich -->
+        <Border Grid.Column="2" Grid.Row="0" Background="#2A2A2A" CornerRadius="8" Padding="16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,10">
+                        <TextBlock DockPanel.Dock="Left" Text="📊 Dashboard" FontSize="24" FontWeight="SemiBold" />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Content="🔄 Updates prüfen" Command="{Binding UpdatesPruefenCommand}" Height="30" Padding="12,0" Background="#4444AA" Margin="0,0,8,0" />
+                            <Button Content="📥 CSV" Command="{Binding VerlaufExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,0" />
+                            <Button Content="📄 Bericht" Command="{Binding BerichtExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <Border Background="#2F3A1F" CornerRadius="6" Padding="10" Margin="0,0,0,12" Cursor="Hand">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UpdateVerfuegbar}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.InputBindings>
+                            <MouseBinding Gesture="LeftClick" Command="{Binding UpdateStartenCommand}" />
+                        </Border.InputBindings>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding UpdateHinweis}" VerticalAlignment="Center" Foreground="#DCE775" FontWeight="SemiBold" />
+                            <Button DockPanel.Dock="Right"
+                                    Content="⬆ Update starten"
+                                    Command="{Binding UpdateStartenCommand}"
+                                    Style="{StaticResource AppButtonStyle}"
+                                    Background="#2E7D32"
+                                    Foreground="#FFFFFF"
+                                    Width="170"
+                                    Padding="12,4"
+                                    Margin="10,0,0,0" />
+                        </DockPanel>
+                    </Border>
+
+                    <Border Background="#333" CornerRadius="6" Padding="10" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="🗂️ Export-Historie" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                            <ListBox ItemsSource="{Binding ExportHistorie}" Background="#222" BorderThickness="0" Height="160">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,6">
+                                            <DockPanel LastChildFill="False">
+                                                <StackPanel DockPanel.Dock="Left" Width="620">
+                                                    <TextBlock Foreground="#E0E0E0">
+                                                        <Run Text="{Binding Zeitpunkt, StringFormat={}{0:dd.MM.yyyy HH:mm:ss}}" />
+                                                        <Run Text="  •  " />
+                                                        <Run Text="{Binding Typ}" />
+                                                        <Run Text=": " />
+                                                        <Run Text="{Binding Dateiname}" />
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Pfad}" FontSize="11" Opacity="0.65" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <Button DockPanel.Dock="Right" Content="Ordner" Margin="6,0,0,0" Padding="10,2"
+                                                        Command="{Binding DataContext.ExportOrdnerOeffnenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Pfad}" />
+                                                <Button DockPanel.Dock="Right" Content="Öffnen" Padding="10,2"
+                                                        Command="{Binding DataContext.ExportDateiOeffnenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Pfad}" />
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#333" CornerRadius="6" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="ℹ️ Chargendetails" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                                <TextBlock Text="{Binding SelectedCharge.Bezeichnung, StringFormat='Bezeichnung: {0}'}" />
+                                <TextBlock Text="{Binding SelectedCharge.Fleischtyp, StringFormat='Fleischtyp: {0}'}" />
+                                <TextBlock Text="{Binding SelectedCharge.Startdatum, StringFormat='Startdatum: {0:dd.MM.yyyy}'}" />
+                                <TextBlock Text="{Binding SelectedCharge.ZielverlustProzent, StringFormat='Zielverlust: {0:F1}%'}" />
+                                <TextBlock Text="{Binding SelectedCharge.Stuecke.Count, StringFormat='Stücke: {0}'}" />
+                                <TextBlock Text="{Binding SelectedCharge.StatusUebersicht}" Foreground="#6EB7FF" FontWeight="SemiBold" />
+                                <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,8,0,0" Cursor="Hand" MouseLeftButtonUp="Rezept_Doppelklick">
+                                    <StackPanel>
+                                        <TextBlock Text="📖 Rezept" FontSize="12" Opacity="0.7" />
+                                        <TextBlock Text="{Binding SelectedCharge.Rezept.Name, FallbackValue='Kein Rezept'}" FontSize="13" FontWeight="SemiBold" Foreground="#FFD54F" />
+                                        <TextBlock FontSize="10" Opacity="0.6" Margin="0,2,0,0">
+                                            <Run Text="Berechnet für " />
+                                            <Run Text="{Binding SelectedCharge.Stuecke.Count, Mode=OneWay}" />
+                                            <Run Text=" Stück(e)" />
+                                        </TextBlock>
+                                        <TextBlock Text="👆 Klicken zum Öffnen" FontSize="10" Opacity="0.5" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#333" CornerRadius="6" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="➕ Stück hinzufügen" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                                <TextBlock Text="Startgewicht (g)" FontSize="12" Opacity="0.85" />
+                                <TextBox Text="{Binding NeuesStartgewicht, UpdateSourceTrigger=PropertyChanged}" Height="30" Margin="0,2,0,8" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="✓ Stück" Command="{Binding StueckHinzufuegenCommand}" Height="32" Background="#0A84FF" Padding="12,0" />
+                                    <Button Content="🛠 Ändern" Command="{Binding StueckBearbeitenCommand}" Height="32" Margin="8,0,0,0" Padding="12,0" Background="#4444AA" />
+                                    <Button Content="✗ Löschen" Command="{Binding StueckLoeschenCommand}" Height="32" Margin="8,0,0,0" Padding="12,0" Background="#DD3333" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock Text="🥓 Stücke" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                    <DataGrid x:Name="StueckeGrid"
+                              ItemsSource="{Binding AktiveStuecke}"
+                              SelectedItem="{Binding SelectedStueck}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              RowEditEnding="StueckeGrid_RowEditEnding"
+                              Height="200"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              Background="#222"
+                              GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="200" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Start (g)" Binding="{Binding Startgewicht, StringFormat=F0}" Width="100" />
+                            <DataGridTextColumn Header="Aktuell (g)" Binding="{Binding AktuellesGewicht, StringFormat=F0}" Width="100" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Verlust %" Binding="{Binding GewichtsverlustProzent, StringFormat=F2}" Width="90" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Tage" Binding="{Binding Reifetage}" Width="70" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Ø/Tag %" Binding="{Binding DurchschnittlicherTagesverlust, StringFormat=F2}" Width="90" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Background="#333" CornerRadius="6" Padding="10" Margin="0,12,0,12">
+                        <StackPanel>
+                            <TextBlock Text="📝 Messung eintragen" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="165" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Datum" FontSize="12" Opacity="0.85" />
+                                <TextBlock Grid.Column="1" Text="Gewicht (g)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="2" Text="Temperatur (°C)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="3" Text="Luftfeuchte (%)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="4" Text="Notiz" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                            </Grid>
+
+                            <WrapPanel>
+                                <DatePicker SelectedDate="{Binding NeuesMessdatum}" SelectedDateFormat="Short" Width="165" Height="30" Margin="0,0,8,8" />
+                                <TextBox Text="{Binding NeuesMessgewicht, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
+                                <TextBox Text="{Binding NeueTemperatur, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
+                                <TextBox Text="{Binding NeueLuftfeuchte, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
+                                <TextBox Text="{Binding NeueNotiz, UpdateSourceTrigger=PropertyChanged}" Width="260" Height="30" Margin="0,0,8,8" />
+                                <Button Content="✓ Speichern" Command="{Binding MessungHinzufuegenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,8" />
+                                <Button Content="🛠 Ändern" Command="{Binding MessungBearbeitenCommand}" Height="30" Padding="12,0" Background="#4444AA" Margin="0,0,8,8" />
+                                <Button Content="✗ Löschen" Command="{Binding MessungLoeschenCommand}" Height="30" Padding="12,0" Background="#DD3333" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="#333" CornerRadius="6" Padding="10" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="📉 Reifeverlauf" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                            <Border Background="#202020" BorderBrush="#444" BorderThickness="1" CornerRadius="4">
+                                <Grid Width="1080" Height="280" Margin="8">
+                                    <Canvas Width="1080" Height="280">
+                                        <TextBlock Canvas.Left="430" Canvas.Top="6" Text="Reifeverlauf – Schinken" FontSize="16" FontWeight="SemiBold" Foreground="#E0E0E0" />
+
+                                        <Line X1="55" Y1="40" X2="55" Y2="236" Stroke="#777" StrokeThickness="1" />
+                                        <Line X1="55" Y1="236" X2="1068" Y2="236" Stroke="#777" StrokeThickness="1" />
+
+                                        <Line X1="55" Y1="40" X2="1068" Y2="40" Stroke="#3F3F3F" StrokeThickness="1" />
+                                        <Line X1="55" Y1="79" X2="1068" Y2="79" Stroke="#3F3F3F" StrokeThickness="1" />
+                                        <Line X1="55" Y1="118" X2="1068" Y2="118" Stroke="#3F3F3F" StrokeThickness="1" />
+                                        <Line X1="55" Y1="157" X2="1068" Y2="157" Stroke="#3F3F3F" StrokeThickness="1" />
+                                        <Line X1="55" Y1="196" X2="1068" Y2="196" Stroke="#3F3F3F" StrokeThickness="1" />
+                                        <Line X1="55" Y1="236" X2="1068" Y2="236" Stroke="#3F3F3F" StrokeThickness="1" />
+
+                                        <Polyline Points="{Binding GewichtChartPoints}" Stroke="#4CAF50" StrokeThickness="2"/>
+                                        <Polyline Points="{Binding VerlustChartPoints}" Stroke="#FF9800" StrokeThickness="2"/>
+                                        <Polyline Points="{Binding ZielverlustChartPoints}" Stroke="#03A9F4" StrokeThickness="2"/>
+                                        <Polyline Points="{Binding ZielgewichtChartPoints}" Stroke="#FFD54F" StrokeThickness="2"/>
+
+                                        <TextBlock Canvas.Left="510" Canvas.Top="254" Text="TAG" FontSize="12" Foreground="#BDBDBD" />
+                                        <TextBlock Canvas.Left="8" Canvas.Top="132" Text="WERT" FontSize="12" Foreground="#BDBDBD" />
+                                    </Canvas>
+
+                                    <ItemsControl ItemsSource="{Binding ChartXAxisLabels}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <Canvas Width="1080" Height="280" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemContainerStyle>
+                                            <Style TargetType="ContentPresenter">
+                                                <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                                <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                            </Style>
+                                        </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Text}" FontSize="11" Foreground="#BDBDBD" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Border VerticalAlignment="Bottom" Margin="180,0,180,6" Background="#2A2A2A" CornerRadius="4" Padding="8,4">
+                                        <WrapPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="Gewicht (g)  " Foreground="#4CAF50" />
+                                            <TextBlock Text="Verlust (%)  " Foreground="#FF9800" />
+                                            <TextBlock Text="Zielverlust (%)  " Foreground="#03A9F4" />
+                                            <TextBlock Text="Zielgewicht (g)" Foreground="#FFD54F" />
+                                        </WrapPanel>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="📈 Messverlauf" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                    <DataGrid x:Name="MessungenGrid"
+                              ItemsSource="{Binding AktiveMessungen}"
+                              SelectedItem="{Binding SelectedMessung}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              RowEditEnding="MessungenGrid_RowEditEnding"
+                              Height="240"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              Background="#222"
+                              GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="120" />
+                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="120" />
+                            <DataGridTextColumn Header="Temperatur (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="120" />
+                            <DataGridTextColumn Header="Luftfeuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="130" />
+                            <DataGridTextColumn Header="Notiz" Binding="{Binding Notiz}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- STATUS BAR -->
+        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#1A1A1A" CornerRadius="4" Padding="12,8">
+            <TextBlock Text="{Binding Statusmeldung}" Foreground="#6EB7FF" FontSize="12" VerticalAlignment="Center" />
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,10 @@
+
+.vs/
+bin/
+obj/
+publish/
+installer/*.exe
+installer/*.zip
+Backups/
+*.user
+*.suo
