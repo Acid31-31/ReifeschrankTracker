@@ -7,44 +7,29 @@ namespace ReifeManager_R01.Views;
 public partial class StueckDetailWindow : Window
 {
     public Fleischstueck? EditiertesStueck { get; private set; }
-
-    private readonly Fleischstueck _originalStueck;
+    private Fleischstueck _originalStueck;
 
     public StueckDetailWindow(Fleischstueck stueck)
     {
         try
         {
+            if (stueck == null)
+                throw new ArgumentNullException(nameof(stueck));
+
+            _originalStueck = stueck;
             InitializeComponent();
             
-            if (stueck == null)
-            {
-                throw new ArgumentNullException(nameof(stueck));
-            }
-            
-            _originalStueck = stueck;
-            
-            // DataContext mit Read-Only Daten
-            DataContext = new
-            {
-                StuckId = stueck.Id.ToString(),
-                AktuellesGewicht = stueck.AktuellesGewicht,
-                Gewichtsverlust = stueck.GewichtsverlustProzent,
-                Reifetage = stueck.Reifetage,
-                Status = stueck.Status.ToString(),
-                MessungenCount = stueck.Messungen?.Count ?? 0
-            };
-
-            // Startgewicht Textbox füllen
-            if (StartgewichtBox != null)
-            {
-                StartgewichtBox.Text = stueck.Startgewicht.ToString("F0");
-            }
+            // Felder füllen NACH InitializeComponent
+            IdBox.Text = stueck.Id.ToString();
+            StartgewichtBox.Text = stueck.Startgewicht.ToString("F0");
+            AktuellesBox.Text = stueck.AktuellesGewicht.ToString("F0");
+            VerlustBox.Text = stueck.GewichtsverlustProzent.ToString("F2");
+            MessungenBox.Text = stueck.Messungen.Count.ToString();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Öffnen des Dialogs: {ex.Message}", "Fehler", 
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            Close();
+            MessageBox.Show($"Fehler beim Öffnen: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+            this.Close();
         }
     }
 
@@ -52,44 +37,42 @@ public partial class StueckDetailWindow : Window
     {
         try
         {
-            if (StartgewichtBox == null || string.IsNullOrWhiteSpace(StartgewichtBox.Text))
+            string gewichtText = StartgewichtBox.Text?.Trim() ?? "";
+            
+            if (string.IsNullOrWhiteSpace(gewichtText))
             {
-                MessageBox.Show("Startgewicht ist erforderlich.", "Eingabefehler", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Startgewicht eingeben!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StartgewichtBox.Focus();
                 return;
             }
 
-            if (!double.TryParse(StartgewichtBox.Text, out var neuesGewicht) || neuesGewicht <= 0)
+            if (!double.TryParse(gewichtText, out double neuesGewicht))
             {
-                MessageBox.Show("Startgewicht muss eine positive Zahl sein (z.B. 2500).", "Ungültige Eingabe", 
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Ungültiges Gewicht (z.B. 2500)", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StartgewichtBox.Focus();
+                return;
+            }
+
+            if (neuesGewicht <= 0 || neuesGewicht > 100000)
+            {
+                MessageBox.Show("Gewicht muss zwischen 0 und 100000 sein", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             _originalStueck.Startgewicht = neuesGewicht;
             EditiertesStueck = _originalStueck;
-            
             DialogResult = true;
-            Close();
+            this.Close();
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Speichern: {ex.Message}", "Fehler", 
-                MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Fehler beim Speichern: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private void Abbrechen_Click(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            DialogResult = false;
-            Close();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Fehler beim Schließen: {ex.Message}", "Fehler");
-            Close();
-        }
+        DialogResult = false;
+        this.Close();
     }
 }

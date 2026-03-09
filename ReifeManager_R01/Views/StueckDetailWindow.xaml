@@ -1,41 +1,32 @@
 <Window x:Class="ReifeManager_R01.Views.StueckDetailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Fleischstück bearbeiten" Height="450" Width="500"
-        Background="#1E1E1E" Foreground="#F3F3F3" WindowStartupLocation="CenterOwner"
+        Title="Fleischstück bearbeiten" Height="350" Width="400"
+        Background="#1E1E1E" Foreground="#F3F3F3" 
+        WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize" ShowInTaskbar="False">
-    <Grid Margin="16">
-        <StackPanel>
-            <TextBlock Text="Fleischstück Details" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,16" />
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Top">
+            <TextBlock Text="Fleischstück ändern" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,20" />
             
-            <TextBlock Text="Stück-ID" FontSize="12" Opacity="0.85" />
-            <TextBox Text="{Binding StuckId}" IsReadOnly="True" Height="30" Margin="0,2,0,12" Opacity="0.6" />
+            <TextBlock Text="Stück-ID:" FontSize="12" Margin="0,0,0,5" />
+            <TextBox x:Name="IdBox" IsReadOnly="True" Height="28" Margin="0,0,0,15" Opacity="0.6" />
             
-            <TextBlock Text="Startgewicht (g)" FontSize="12" Opacity="0.85" />
-            <TextBox x:Name="StartgewichtBox" Height="30" Margin="0,2,0,12" />
+            <TextBlock Text="Startgewicht (g):" FontSize="12" Margin="0,0,0,5" />
+            <TextBox x:Name="StartgewichtBox" Height="28" Margin="0,0,0,15" />
             
-            <TextBlock Text="Aktuelles Gewicht (g)" FontSize="12" Opacity="0.85" />
-            <TextBox Text="{Binding AktuellesGewicht, StringFormat=F0}" IsReadOnly="True" Height="30" Margin="0,2,0,12" Opacity="0.6" />
+            <TextBlock Text="Aktuelles Gewicht (g):" FontSize="12" Margin="0,0,0,5" />
+            <TextBox x:Name="AktuellesBox" IsReadOnly="True" Height="28" Margin="0,0,0,15" Opacity="0.6" />
             
-            <TextBlock Text="Gewichtsverlust (%)" FontSize="12" Opacity="0.85" />
-            <TextBox Text="{Binding Gewichtsverlust, StringFormat=F2}" IsReadOnly="True" Height="30" Margin="0,2,0,12" Opacity="0.6" />
+            <TextBlock Text="Gewichtsverlust (%):" FontSize="12" Margin="0,0,0,5" />
+            <TextBox x:Name="VerlustBox" IsReadOnly="True" Height="28" Margin="0,0,0,15" Opacity="0.6" />
             
-            <TextBlock Text="Reifetage" FontSize="12" Opacity="0.85" />
-            <TextBox Text="{Binding Reifetage}" IsReadOnly="True" Height="30" Margin="0,2,0,12" Opacity="0.6" />
-            
-            <TextBlock Text="Status" FontSize="12" Opacity="0.85" />
-            <TextBox Text="{Binding Status}" IsReadOnly="True" Height="30" Margin="0,2,0,12" Opacity="0.6" />
-            
-            <Border Background="#2A2A2A" CornerRadius="4" Padding="8" Margin="0,0,0,16">
-                <StackPanel>
-                    <TextBlock Text="Messungen" FontSize="12" FontWeight="SemiBold" Opacity="0.8" Margin="0,0,0,6" />
-                    <TextBlock Text="{Binding MessungenCount, StringFormat='Anzahl: {0}'}" FontSize="11" Opacity="0.7" />
-                </StackPanel>
-            </Border>
+            <TextBlock Text="Messungen:" FontSize="12" Margin="0,0,0,5" />
+            <TextBox x:Name="MessungenBox" IsReadOnly="True" Height="28" Margin="0,0,0,30" Opacity="0.6" />
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="✓ Speichern" Height="36" Padding="20,0" Background="#0A84FF" Click="Speichern_Click" />
-                <Button Content="✗ Abbrechen" Height="36" Padding="20,0" Margin="8,0,0,0" Background="#666666" Click="Abbrechen_Click" />
+                <Button Content="✓ Speichern" Height="34" Padding="20,0" Background="#0A84FF" Click="Speichern_Click" />
+                <Button Content="✗ Abbrechen" Height="34" Padding="20,0" Margin="10,0,0,0" Background="#666666" Click="Abbrechen_Click" />
             </StackPanel>
         </StackPanel>
     </Grid>
