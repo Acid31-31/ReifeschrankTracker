@@ -24,7 +24,11 @@ public partial class StueckDetailWindow : Window
             StartgewichtBox.Text = stueck.Startgewicht.ToString("F0");
             AktuellesBox.Text = stueck.AktuellesGewicht.ToString("F0");
             VerlustBox.Text = stueck.GewichtsverlustProzent.ToString("F2");
+            ReifetageBox.Text = stueck.Reifetage.ToString();
+            StatusBox.Text = stueck.Status.ToString();
             MessungenBox.Text = stueck.Messungen.Count.ToString();
+            
+            StartgewichtBox.Focus();
         }
         catch (Exception ex)
         {

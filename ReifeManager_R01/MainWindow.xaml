@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="🥩 ReifeManager R01 — Reifeschrank-Verwaltung" Height="900" Width="1400" MinHeight="800" MinWidth="1200"
-        Background="#1E1E1E" Foreground="#F3F3F3" WindowStartupLocation="CenterScreen">
+        Background="#1E1E1E" Foreground="#F3F3F3" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Grid Margin="16">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="330" />
@@ -55,7 +55,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <ListBox ItemsSource="{Binding Chargen}" SelectedItem="{Binding SelectedCharge}" Background="#222" BorderThickness="0">
+                <ListBox x:Name="ChargenListBox" ItemsSource="{Binding Chargen}" SelectedItem="{Binding SelectedCharge}" Background="#222" BorderThickness="0" MouseDoubleClick="ChargenListBox_MouseDoubleClick">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border Padding="8" Margin="0,0,0,8" Background="#333" CornerRadius="5">

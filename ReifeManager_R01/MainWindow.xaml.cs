@@ -111,4 +111,46 @@ public partial class MainWindow : Window
             MessageBox.Show("Für diese Charge wurde kein Rezept ausgewählt.", "Kein Rezept", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
+
+    private void ChargenListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        try
+        {
+            if (DataContext is not MainViewModel vm || vm.SelectedCharge is null)
+                return;
+
+            if (vm.SelectedCharge.Stuecke.Count == 0)
+            {
+                MessageBox.Show("Diese Charge hat noch keine Stücke.", "Kein Stück vorhanden", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Nimm das erste Stück zur Bearbeitung
+            var stueck = vm.SelectedCharge.Stuecke.FirstOrDefault();
+            if (stueck != null)
+            {
+                var dialog = new Views.StueckDetailWindow(stueck)
+                {
+                    Owner = this
+                };
+
+                if (dialog.ShowDialog() == true && dialog.EditiertesStueck is not null)
+                {
+                    var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
+                    vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
+                    vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
+                    vm.AktualisiereStueckUiPublic();
+                    vm.SpeichernPublic();
+                    vm.AktualisiereDiagrammPublic();
+                    
+                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g.";
+                }
+            }
+            e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Fehler beim Bearbeiten: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 }
