@@ -562,8 +562,9 @@ public class MainViewModel : ObservableObject
         var bezug = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
         AktualisiereStueck(SelectedCharge, SelectedStueck, bezug);
         AktualisiereChargeStatus(SelectedCharge);
+        OnPropertyChanged(nameof(AktiveStuecke));
 
-        Statusmeldung = "✓ Stück aktualisiert.";
+        Statusmeldung = $"✓ Stück aktualisiert auf {startgewicht:F0}g.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -1014,9 +1015,6 @@ public class MainViewModel : ObservableObject
     {
         try
         {
-            var aktuelleVersion = System.Reflection.Assembly.GetExecutingAssembly()
-                .GetName().Version?.ToString(3) ?? "1.0.0";
-
             var update = await _updateService.PruefeAufUpdateAsync();
             if (update is null)
             {
@@ -1025,11 +1023,6 @@ public class MainViewModel : ObservableObject
 
                 if (manuell)
                 {
-                    MessageBox.Show(
-                        $"Keine neue Version verfügbar.\n\nAktuelle Version: {aktuelleVersion}\n\nIhre Anwendung ist auf dem aktuellen Stand.",
-                        "✓ Aktuell",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
                     Statusmeldung = "✓ Keine neue Version gefunden.";
                 }
 
@@ -1040,18 +1033,15 @@ public class MainViewModel : ObservableObject
             UpdateVerfuegbar = true;
             UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
 
-            if (manuell)
-            {
-                var result = MessageBox.Show(
-                    $"Neue Version verfügbar!\n\nAktuelle Version: {aktuelleVersion}\nNeue Version: {update.Version}\n\nJetzt herunterladen und installieren?",
-                    "Update verfügbar",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Information);
+            var result = MessageBox.Show(
+                $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
+                "Update verfügbar",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    await UpdateStartenAsync();
-                }
+            if (result == MessageBoxResult.Yes)
+            {
+                await UpdateStartenAsync();
             }
         }
         catch (Exception ex)
@@ -1062,11 +1052,6 @@ public class MainViewModel : ObservableObject
 
             if (manuell)
             {
-                MessageBox.Show(
-                    $"Update-Prüfung fehlgeschlagen.\n\n{grund}",
-                    "❌ Fehler",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
                 Statusmeldung = $"❌ Update-Prüfung fehlgeschlagen: {grund}";
             }
         }
