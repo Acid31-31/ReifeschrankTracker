@@ -1099,6 +1099,31 @@ public class MainViewModel : ObservableObject
         }
     }
 
+    public void AktualisiereStueckPublic(Charge charge, Fleischstueck stueck, DateTime standDatum)
+    {
+        AktualisiereStueck(charge, stueck, standDatum);
+    }
+
+    public void AktualisiereChargeStatusPublic(Charge charge)
+    {
+        AktualisiereChargeStatus(charge);
+    }
+
+    public void AktualisiereStueckUiPublic()
+    {
+        OnPropertyChanged(nameof(AktiveStuecke));
+    }
+
+    public void SpeichernPublic()
+    {
+        Speichern();
+    }
+
+    public void AktualisiereDiagrammPublic()
+    {
+        AktualisiereDiagramm();
+    }
+
     private static bool TryParseDouble(string input, out double value)
     {
         input = input.Trim();
