@@ -7,16 +7,22 @@ namespace ReifeManager_R01.Views;
 public partial class StueckDetailWindow : Window
 {
     public Fleischstueck? EditiertesStueck { get; private set; }
+    public DateTime? NeuesStartdatum { get; private set; }
+    
     private Fleischstueck _originalStueck;
+    private Charge _charge;
 
-    public StueckDetailWindow(Fleischstueck stueck)
+    public StueckDetailWindow(Fleischstueck stueck, Charge charge)
     {
         try
         {
             if (stueck == null)
                 throw new ArgumentNullException(nameof(stueck));
+            if (charge == null)
+                throw new ArgumentNullException(nameof(charge));
 
             _originalStueck = stueck;
+            _charge = charge;
             InitializeComponent();
             
             // Felder füllen NACH InitializeComponent
@@ -27,6 +33,9 @@ public partial class StueckDetailWindow : Window
             ReifetageBox.Text = stueck.Reifetage.ToString();
             StatusBox.Text = stueck.Status.ToString();
             MessungenBox.Text = stueck.Messungen.Count.ToString();
+            
+            // Startdatum aus Charge laden
+            StartdatumPicker.SelectedDate = charge.Startdatum;
             
             StartgewichtBox.Focus();
         }
@@ -63,8 +72,16 @@ public partial class StueckDetailWindow : Window
                 return;
             }
 
+            if (!StartdatumPicker.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Bitte Startdatum wählen!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             _originalStueck.Startgewicht = neuesGewicht;
             EditiertesStueck = _originalStueck;
+            NeuesStartdatum = StartdatumPicker.SelectedDate.Value;
+            
             DialogResult = true;
             this.Close();
         }

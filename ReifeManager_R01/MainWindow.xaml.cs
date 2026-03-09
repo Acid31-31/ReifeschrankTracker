@@ -30,24 +30,30 @@ public partial class MainWindow : Window
             if (stueck == null)
                 return;
 
-            var dialog = new Views.StueckDetailWindow(stueck)
+            if (DataContext is not MainViewModel vm || vm.SelectedCharge is null)
+                return;
+
+            var dialog = new Views.StueckDetailWindow(stueck, vm.SelectedCharge)
             {
                 Owner = this
             };
 
             if (dialog.ShowDialog() == true && dialog.EditiertesStueck is not null)
             {
-                if (DataContext is MainViewModel vm && vm.SelectedCharge is not null)
+                // Startdatum in Charge aktualisieren wenn geändert
+                if (dialog.NeuesStartdatum.HasValue)
                 {
-                    var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
-                    vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
-                    vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
-                    vm.AktualisiereStueckUiPublic();
-                    vm.SpeichernPublic();
-                    vm.AktualisiereDiagrammPublic();
-                    
-                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g.";
+                    vm.SelectedCharge.Startdatum = dialog.NeuesStartdatum.Value;
                 }
+
+                var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
+                vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
+                vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
+                vm.AktualisiereStueckUiPublic();
+                vm.SpeichernPublic();
+                vm.AktualisiereDiagrammPublic();
+                
+                vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g und Startdatum geändert.";
             }
             e.Handled = true;
         }
@@ -127,23 +133,31 @@ public partial class MainWindow : Window
 
             // Nimm das erste Stück zur Bearbeitung
             var stueck = vm.SelectedCharge.Stuecke.FirstOrDefault();
-            if (stueck != null)
+            var charge = vm.SelectedCharge;
+            
+            if (stueck != null && charge != null)
             {
-                var dialog = new Views.StueckDetailWindow(stueck)
+                var dialog = new Views.StueckDetailWindow(stueck, charge)
                 {
                     Owner = this
                 };
 
                 if (dialog.ShowDialog() == true && dialog.EditiertesStueck is not null)
                 {
+                    // Startdatum in Charge aktualisieren wenn geändert
+                    if (dialog.NeuesStartdatum.HasValue)
+                    {
+                        charge.Startdatum = dialog.NeuesStartdatum.Value;
+                    }
+
                     var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
-                    vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
-                    vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
+                    vm.AktualisiereStueckPublic(charge, stueck, bezug);
+                    vm.AktualisiereChargeStatusPublic(charge);
                     vm.AktualisiereStueckUiPublic();
                     vm.SpeichernPublic();
                     vm.AktualisiereDiagrammPublic();
                     
-                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g.";
+                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g und Startdatum geändert.";
                 }
             }
             e.Handled = true;
