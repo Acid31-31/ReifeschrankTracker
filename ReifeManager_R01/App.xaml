@@ -262,8 +262,10 @@
                                     <!-- Prev Button -->
                                     <Button x:Name="PART_PreviousButton" Grid.Column="0" Content="‹" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
                                     
-                                    <!-- Monat/Jahr -->
-                                    <Button x:Name="PART_HeaderButton" Grid.Column="1" Content="{Binding}" Foreground="#F3F3F3" Background="Transparent" BorderThickness="0" FontSize="14" FontWeight="Bold" />
+                                    <!-- Monat/Jahr - DUNKELGELB auf DUNKEL -->
+                                    <Border Grid.Column="1" Background="#333333" BorderBrush="#555555" BorderThickness="1" CornerRadius="3" Padding="8,4">
+                                        <TextBlock x:Name="PART_HeaderButton" Text="{Binding}" Foreground="#FFD54F" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" />
+                                    </Border>
                                     
                                     <!-- Next Button -->
                                     <Button x:Name="PART_NextButton" Grid.Column="2" Content="›" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
