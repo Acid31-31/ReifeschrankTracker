@@ -190,7 +190,11 @@ public class UpdateService
     private static HttpClient ErzeugeClient()
     {
         var client = new HttpClient();
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("ReifeManager_R01");
+        // GitHub API braucht einen aussagekräftigen User-Agent
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("ReifeManager/1.0 (+https://github.com/Acid31-31/ReifeschrankTracker)");
+        
+        // Timeout setzen um Rate Limiting zu vermeiden
+        client.Timeout = TimeSpan.FromSeconds(10);
 
         var token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
         if (!string.IsNullOrWhiteSpace(token))
