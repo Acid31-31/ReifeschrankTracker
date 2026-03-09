@@ -236,5 +236,70 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
         </Style>
+
+        <Style TargetType="CalendarItem">
+            <Setter Property="Background" Value="#1E1E1E" />
+            <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarItem">
+                        <Grid Background="#1E1E1E">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- HEADER: Monat/Jahr mit Navigation -->
+                            <Border Grid.Row="0" Background="#2A2A2A" BorderBrush="#555555" BorderThickness="0,0,0,2" Padding="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Prev Button -->
+                                    <Button x:Name="PART_PreviousButton" Grid.Column="0" Content="‹" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
+                                    
+                                    <!-- Monat/Jahr -->
+                                    <Button x:Name="PART_HeaderButton" Grid.Column="1" Content="{Binding}" Foreground="#F3F3F3" Background="Transparent" BorderThickness="0" FontSize="14" FontWeight="Bold" />
+                                    
+                                    <!-- Next Button -->
+                                    <Button x:Name="PART_NextButton" Grid.Column="2" Content="›" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
+                                </Grid>
+                            </Border>
+
+                            <!-- WOCHENTAGE: Mo, Di, Mi, Do, Fr, Sa, So -->
+                            <Border Grid.Row="1" Background="#222222" BorderBrush="#444444" BorderThickness="0,0,0,1" Padding="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Mo" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="1" Text="Di" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="2" Text="Mi" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="3" Text="Do" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="4" Text="Fr" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="5" Text="Sa" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                    <TextBlock Grid.Column="6" Text="So" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
+                                </Grid>
+                            </Border>
+
+                            <!-- TAGE GRID -->
+                            <Grid x:Name="PART_MonthView" Grid.Row="2" Background="#1E1E1E" Margin="2">
+                                <ItemsPresenter />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
