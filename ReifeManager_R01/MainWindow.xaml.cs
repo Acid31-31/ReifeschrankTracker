@@ -22,8 +22,16 @@ public partial class MainWindow : Window
 
     private void StueckeGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (sender is DataGrid grid && grid.SelectedItem is ReifeManager_R01.Models.Fleischstueck stueck)
+        try
         {
+            var grid = sender as DataGrid;
+            if (grid == null || grid.SelectedItem == null)
+                return;
+
+            var stueck = grid.SelectedItem as ReifeManager_R01.Models.Fleischstueck;
+            if (stueck == null)
+                return;
+
             var dialog = new Views.StueckDetailWindow(stueck)
             {
                 Owner = this
@@ -31,23 +39,23 @@ public partial class MainWindow : Window
 
             if (dialog.ShowDialog() == true && dialog.EditiertesStueck is not null)
             {
-                if (DataContext is MainViewModel vm)
+                if (DataContext is MainViewModel vm && vm.SelectedCharge is not null)
                 {
-                    var charge = vm.SelectedCharge;
-                    if (charge is not null)
-                    {
-                        var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
-                        vm.AktualisiereStueckPublic(charge, stueck, bezug);
-                        vm.AktualisiereChargeStatusPublic(charge);
-                        vm.AktualisiereStueckUiPublic();
-                        vm.SpeichernPublic();
-                        vm.AktualisiereDiagrammPublic();
-                        
-                        vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g.";
-                    }
+                    var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
+                    vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
+                    vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
+                    vm.AktualisiereStueckUiPublic();
+                    vm.SpeichernPublic();
+                    vm.AktualisiereDiagrammPublic();
+                    
+                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g.";
                 }
             }
             e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Fehler beim Bearbeiten: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
