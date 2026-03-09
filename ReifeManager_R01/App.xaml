@@ -159,8 +159,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Calendar">
-                        <StackPanel Background="#1E1E1E" Name="PART_Root">
-                            <CalendarItem x:Name="PART_CalendarItem" Background="#1E1E1E" Foreground="#F3F3F3" />
+                        <StackPanel x:Name="PART_Root" Background="#1E1E1E" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <CalendarItem x:Name="PART_CalendarItem" 
+                                          Background="#1E1E1E"
+                                          BorderBrush="#555555"
+                                          BorderThickness="1" />
                         </StackPanel>
                     </ControlTemplate>
                 </Setter.Value>
