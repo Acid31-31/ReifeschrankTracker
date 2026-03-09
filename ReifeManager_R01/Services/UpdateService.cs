@@ -19,24 +19,33 @@ public class UpdateService
 
     public async Task<UpdateInfo?> PruefeAufUpdateAsync()
     {
-        using var client = ErzeugeClient();
-
-        using var releaseResponse = await client.GetAsync(LatestReleaseApiUrl);
-        if (releaseResponse.IsSuccessStatusCode)
+        try
         {
-            var releaseJson = await releaseResponse.Content.ReadAsStringAsync();
-            var releaseUpdate = ParseReleaseUpdate(releaseJson);
-            if (releaseUpdate is not null)
+            using var client = ErzeugeClient();
+
+            using var releaseResponse = await client.GetAsync(LatestReleaseApiUrl);
+            if (releaseResponse.IsSuccessStatusCode)
             {
-                return releaseUpdate;
+                var releaseJson = await releaseResponse.Content.ReadAsStringAsync();
+                var releaseUpdate = ParseReleaseUpdate(releaseJson);
+                if (releaseUpdate is not null)
+                {
+                    return releaseUpdate;
+                }
             }
-        }
-        else if (releaseResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
-        {
-            releaseResponse.EnsureSuccessStatusCode();
-        }
+            else if (releaseResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            {
+                releaseResponse.EnsureSuccessStatusCode();
+            }
 
-        return await PruefeTagInstallerFallbackAsync(client);
+            return await PruefeTagInstallerFallbackAsync(client);
+        }
+        catch (Exception ex)
+        {
+            // Fehler protokollieren aber nicht crashen
+            System.Diagnostics.Debug.WriteLine($"Update-Prüfung fehlgeschlagen: {ex.Message}");
+            return null;
+        }
     }
 
     public async Task<string> LadeUpdateHerunterAsync(UpdateInfo info)
@@ -69,122 +78,150 @@ public class UpdateService
 
     private async Task<UpdateInfo?> PruefeTagInstallerFallbackAsync(HttpClient client)
     {
-        using var tagsResponse = await client.GetAsync(TagsApiUrl);
-        tagsResponse.EnsureSuccessStatusCode();
-
-        var tagsJson = await tagsResponse.Content.ReadAsStringAsync();
-        using var tagsDoc = JsonDocument.Parse(tagsJson);
-
-        if (tagsDoc.RootElement.ValueKind != JsonValueKind.Array)
+        try
         {
-            throw new InvalidOperationException("GitHub-Tags konnten nicht gelesen werden.");
-        }
+            using var tagsResponse = await client.GetAsync(TagsApiUrl);
+            tagsResponse.EnsureSuccessStatusCode();
 
-        string? tagName = null;
-        Version? latest = null;
+            var tagsJson = await tagsResponse.Content.ReadAsStringAsync();
+            using var tagsDoc = JsonDocument.Parse(tagsJson);
 
-        foreach (var tag in tagsDoc.RootElement.EnumerateArray())
-        {
-            var name = tag.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
-            if (string.IsNullOrWhiteSpace(name))
+            if (tagsDoc.RootElement.ValueKind != JsonValueKind.Array)
             {
-                continue;
+                return null;
             }
 
-            var parsed = ParseVersion(name);
-            if (parsed <= new Version(1, 0, 0))
+            string? tagName = null;
+            Version? latest = null;
+
+            foreach (var tag in tagsDoc.RootElement.EnumerateArray())
             {
-                continue;
+                var name = tag.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    continue;
+                }
+
+                var parsed = ParseVersion(name);
+                if (parsed <= new Version(1, 0, 0))
+                {
+                    continue;
+                }
+
+                tagName = name;
+                latest = parsed;
+                break;
             }
 
-            tagName = name;
-            latest = parsed;
-            break;
-        }
+            if (latest is null || string.IsNullOrWhiteSpace(tagName))
+            {
+                return null;
+            }
 
-        if (latest is null || string.IsNullOrWhiteSpace(tagName))
-        {
-            throw new InvalidOperationException("Keine gültigen Versionstags gefunden.");
-        }
+            var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
+            if (latest <= current)
+            {
+                return null;
+            }
 
-        var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
-        if (latest <= current)
-        {
+            var cleanTag = tagName.Trim().TrimStart('v', 'V');
+            var kandidaten = new[]
+            {
+                $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup_v{cleanTag}.exe",
+                $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup_{cleanTag}.exe",
+                $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup.exe"
+            };
+
+            foreach (var url in kandidaten)
+            {
+                try
+                {
+                    using var head = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                    if (head.IsSuccessStatusCode)
+                    {
+                        return new UpdateInfo
+                        {
+                            Version = latest.ToString(),
+                            DownloadUrl = url,
+                            ReleaseUrl = ReleasePageUrl,
+                            AssetName = Path.GetFileName(new Uri(url).AbsolutePath)
+                        };
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
             return null;
         }
-
-        var cleanTag = tagName.Trim().TrimStart('v', 'V');
-        var kandidaten = new[]
+        catch (Exception ex)
         {
-            $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup_v{cleanTag}.exe",
-            $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup_{cleanTag}.exe",
-            $"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/ReifeManager_Setup.exe"
-        };
-
-        foreach (var url in kandidaten)
-        {
-            using var head = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-            if (head.IsSuccessStatusCode)
-            {
-                return new UpdateInfo
-                {
-                    Version = latest.ToString(),
-                    DownloadUrl = url,
-                    ReleaseUrl = ReleasePageUrl,
-                    AssetName = Path.GetFileName(new Uri(url).AbsolutePath)
-                };
-            }
+            System.Diagnostics.Debug.WriteLine($"Fallback Tag-Prüfung fehlgeschlagen: {ex.Message}");
+            return null;
         }
-
-        throw new InvalidOperationException("Neue Version erkannt, aber keine Installer-Datei im GitHub-Ordner 'installer' gefunden.");
     }
 
     private static UpdateInfo? ParseReleaseUpdate(string releaseJson)
     {
-        using var doc = JsonDocument.Parse(releaseJson);
-        var root = doc.RootElement;
-
-        var tag = root.GetProperty("tag_name").GetString() ?? string.Empty;
-        var latest = ParseVersion(tag);
-        var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
-
-        if (latest <= current)
+        try
         {
-            return null;
-        }
+            using var doc = JsonDocument.Parse(releaseJson);
+            var root = doc.RootElement;
 
-        var releaseUrl = root.TryGetProperty("html_url", out var htmlEl)
-            ? htmlEl.GetString() ?? ReleasePageUrl
-            : ReleasePageUrl;
-
-        if (!root.TryGetProperty("assets", out var assets) || assets.ValueKind != JsonValueKind.Array)
-        {
-            return null;
-        }
-
-        foreach (var asset in assets.EnumerateArray())
-        {
-            var name = asset.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
-            var url = asset.TryGetProperty("browser_download_url", out var urlEl) ? urlEl.GetString() : null;
-
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(url))
+            if (!root.TryGetProperty("tag_name", out var tagEl))
             {
-                continue;
+                return null;
             }
 
-            if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+            var tag = tagEl.GetString() ?? string.Empty;
+            var latest = ParseVersion(tag);
+            var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
+
+            if (latest <= current)
             {
-                return new UpdateInfo
+                return null;
+            }
+
+            var releaseUrl = root.TryGetProperty("html_url", out var htmlEl)
+                ? htmlEl.GetString() ?? ReleasePageUrl
+                : ReleasePageUrl;
+
+            if (!root.TryGetProperty("assets", out var assets) || assets.ValueKind != JsonValueKind.Array)
+            {
+                return null;
+            }
+
+            foreach (var asset in assets.EnumerateArray())
+            {
+                var name = asset.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
+                var url = asset.TryGetProperty("browser_download_url", out var urlEl) ? urlEl.GetString() : null;
+
+                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(url))
                 {
-                    Version = latest.ToString(),
-                    DownloadUrl = url,
-                    ReleaseUrl = releaseUrl,
-                    AssetName = name
-                };
-            }
-        }
+                    continue;
+                }
 
-        return null;
+                if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new UpdateInfo
+                    {
+                        Version = latest.ToString(),
+                        DownloadUrl = url,
+                        ReleaseUrl = releaseUrl,
+                        AssetName = name
+                    };
+                }
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Release-JSON-Parsing fehlgeschlagen: {ex.Message}");
+            return null;
+        }
     }
 
     private static HttpClient ErzeugeClient()
