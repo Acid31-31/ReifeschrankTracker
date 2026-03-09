@@ -197,6 +197,7 @@
                               AutoGenerateColumns="False"
                               IsReadOnly="False"
                               RowEditEnding="StueckeGrid_RowEditEnding"
+                              MouseDoubleClick="StueckeGrid_MouseDoubleClick"
                               Height="200"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"

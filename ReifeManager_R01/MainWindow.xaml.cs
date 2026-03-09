@@ -16,8 +16,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel();
-
-        StueckeGrid.MouseDoubleClick += StueckeGrid_MouseDoubleClick;
     }
 
     private void StueckeGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
