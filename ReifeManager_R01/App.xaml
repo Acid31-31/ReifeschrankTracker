@@ -154,9 +154,92 @@
         </Style>
 
         <Style TargetType="Calendar">
-            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="Background" Value="#1E1E1E" />
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#555555" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Calendar">
+                        <StackPanel Name="PART_Root" Background="#1E1E1E">
+                            <StackPanel.Resources>
+                                <Style TargetType="CalendarItem">
+                                    <Setter Property="Background" Value="#1E1E1E" />
+                                    <Setter Property="Foreground" Value="#F3F3F3" />
+                                    <Setter Property="BorderBrush" Value="#555555" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <CalendarItem x:Name="PART_CalendarItem" 
+                                          Background="#1E1E1E"
+                                          Foreground="#F3F3F3"
+                                          BorderBrush="#555555"
+                                          BorderThickness="1" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="CalendarItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarItem">
+                        <Grid Background="#1E1E1E">
+                            <Border Background="#1E1E1E" BorderBrush="#555555" BorderThickness="1">
+                                <Grid Background="#1E1E1E">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <!-- Header -->
+                                    <Border Grid.Row="0" Background="#2A2A2A" BorderBrush="#555555" BorderThickness="0,0,0,1" Padding="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Button Grid.Column="0" Content="&lt;" Foreground="#F3F3F3" Background="Transparent" BorderThickness="0" Padding="5" />
+                                            <TextBlock Grid.Column="1" Text="{Binding}" Foreground="#F3F3F3" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
+                                            <Button Grid.Column="2" Content="&gt;" Foreground="#F3F3F3" Background="Transparent" BorderThickness="0" Padding="5" />
+                                        </Grid>
+                                    </Border>
+                                    <!-- Days Grid -->
+                                    <Grid Grid.Row="1" Background="#1E1E1E">
+                                        <ItemsPresenter />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="CalendarDayButton">
+            <Setter Property="Background" Value="#1E1E1E" />
+            <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="BorderBrush" Value="#444444" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarDayButton">
+                        <Border Background="#1E1E1E" BorderBrush="#444444" BorderThickness="0.5" Padding="5">
+                            <TextBlock Text="{Binding}" Foreground="#F3F3F3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#0A84FF" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#333333" />
+                            </Trigger>
+                            <Trigger Property="IsToday" Value="True">
+                                <Setter Property="Background" Value="#2A6FA0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DataGrid">
