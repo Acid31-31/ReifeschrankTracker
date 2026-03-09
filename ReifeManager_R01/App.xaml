@@ -156,6 +156,15 @@
         <Style TargetType="Calendar">
             <Setter Property="Background" Value="#1E1E1E" />
             <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Calendar">
+                        <StackPanel Background="#1E1E1E" Name="PART_Root">
+                            <CalendarItem x:Name="PART_CalendarItem" Background="#1E1E1E" Foreground="#F3F3F3" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="CalendarDayButton">
