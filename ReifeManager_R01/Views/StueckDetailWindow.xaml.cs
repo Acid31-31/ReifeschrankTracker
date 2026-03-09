@@ -8,6 +8,7 @@ public partial class StueckDetailWindow : Window
 {
     public Fleischstueck? EditiertesStueck { get; private set; }
     public DateTime? NeuesStartdatum { get; private set; }
+    public double? NeuesZielverlust { get; private set; }
     
     private Fleischstueck _originalStueck;
     private Charge _charge;
@@ -28,10 +29,11 @@ public partial class StueckDetailWindow : Window
             // Felder füllen NACH InitializeComponent
             IdBox.Text = stueck.Id.ToString();
             StartgewichtBox.Text = stueck.Startgewicht.ToString("F0");
-            AktuellesBox.Text = stueck.AktuellesGewicht.ToString("F0");
+            ZielverlustBox.Text = charge.ZielverlustProzent.ToString("F1");
             VerlustBox.Text = stueck.GewichtsverlustProzent.ToString("F2");
             ReifetageBox.Text = stueck.Reifetage.ToString();
             StatusBox.Text = stueck.Status.ToString();
+            AktuellesBox.Text = stueck.AktuellesGewicht.ToString("F0");
             MessungenBox.Text = stueck.Messungen.Count.ToString();
             
             // Startdatum aus Charge laden
@@ -51,6 +53,7 @@ public partial class StueckDetailWindow : Window
         try
         {
             string gewichtText = StartgewichtBox.Text?.Trim() ?? "";
+            string zielverlustText = ZielverlustBox.Text?.Trim() ?? "";
             
             if (string.IsNullOrWhiteSpace(gewichtText))
             {
@@ -72,6 +75,26 @@ public partial class StueckDetailWindow : Window
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(zielverlustText))
+            {
+                MessageBox.Show("Zielverlust eingeben!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ZielverlustBox.Focus();
+                return;
+            }
+
+            if (!double.TryParse(zielverlustText, out double neuesZielverlust))
+            {
+                MessageBox.Show("Ungültiger Zielverlust (z.B. 30)", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ZielverlustBox.Focus();
+                return;
+            }
+
+            if (neuesZielverlust < 0 || neuesZielverlust > 100)
+            {
+                MessageBox.Show("Zielverlust muss zwischen 0 und 100% sein", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (!StartdatumPicker.SelectedDate.HasValue)
             {
                 MessageBox.Show("Bitte Startdatum wählen!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -81,6 +104,7 @@ public partial class StueckDetailWindow : Window
             _originalStueck.Startgewicht = neuesGewicht;
             EditiertesStueck = _originalStueck;
             NeuesStartdatum = StartdatumPicker.SelectedDate.Value;
+            NeuesZielverlust = neuesZielverlust;
             
             DialogResult = true;
             this.Close();

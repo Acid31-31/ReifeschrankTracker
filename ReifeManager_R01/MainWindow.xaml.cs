@@ -46,6 +46,12 @@ public partial class MainWindow : Window
                     vm.SelectedCharge.Startdatum = dialog.NeuesStartdatum.Value;
                 }
 
+                // Zielverlust in Charge aktualisieren wenn geändert
+                if (dialog.NeuesZielverlust.HasValue)
+                {
+                    vm.SelectedCharge.ZielverlustProzent = dialog.NeuesZielverlust.Value;
+                }
+
                 var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
                 vm.AktualisiereStueckPublic(vm.SelectedCharge, stueck, bezug);
                 vm.AktualisiereChargeStatusPublic(vm.SelectedCharge);
@@ -53,7 +59,7 @@ public partial class MainWindow : Window
                 vm.SpeichernPublic();
                 vm.AktualisiereDiagrammPublic();
                 
-                vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g und Startdatum geändert.";
+                vm.Statusmeldung = $"✓ Stück + Charge aktualisiert. Zielverlust: {vm.SelectedCharge.ZielverlustProzent:F1}%";
             }
             e.Handled = true;
         }
@@ -131,7 +137,6 @@ public partial class MainWindow : Window
                 return;
             }
 
-            // Nimm das erste Stück zur Bearbeitung
             var stueck = vm.SelectedCharge.Stuecke.FirstOrDefault();
             var charge = vm.SelectedCharge;
             
@@ -150,6 +155,12 @@ public partial class MainWindow : Window
                         charge.Startdatum = dialog.NeuesStartdatum.Value;
                     }
 
+                    // Zielverlust in Charge aktualisieren wenn geändert
+                    if (dialog.NeuesZielverlust.HasValue)
+                    {
+                        charge.ZielverlustProzent = dialog.NeuesZielverlust.Value;
+                    }
+
                     var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
                     vm.AktualisiereStueckPublic(charge, stueck, bezug);
                     vm.AktualisiereChargeStatusPublic(charge);
@@ -157,7 +168,7 @@ public partial class MainWindow : Window
                     vm.SpeichernPublic();
                     vm.AktualisiereDiagrammPublic();
                     
-                    vm.Statusmeldung = $"✓ Stück aktualisiert auf {stueck.Startgewicht:F0}g und Startdatum geändert.";
+                    vm.Statusmeldung = $"✓ Stück + Charge aktualisiert. Zielverlust: {charge.ZielverlustProzent:F1}%";
                 }
             }
             e.Handled = true;
