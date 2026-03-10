@@ -52,30 +52,23 @@ public partial class App : Application
             return;
         }
 
+        var darkBackground = (Brush)new BrushConverter().ConvertFromString("#1E1E1E")!;
+        var midBackground = (Brush)new BrushConverter().ConvertFromString("#2A2A2A")!;
+        var lightText = (Brush)new BrushConverter().ConvertFromString("#F3F3F3")!;
+        var border = (Brush)new BrushConverter().ConvertFromString("#555555")!;
+
+        // Rekursiv ALLE Elemente dunkel einfärben
+        ApplyDarkThemeRecursive(popupRoot, darkBackground, midBackground, lightText, border);
+
         var calendar = FindVisualChild<Calendar>(popupRoot);
         if (calendar is null)
         {
             return;
         }
 
-        var darkBackground = (Brush)new BrushConverter().ConvertFromString("#1E1E1E")!;
-        var midBackground = (Brush)new BrushConverter().ConvertFromString("#2A2A2A")!;
-        var lightText = (Brush)new BrushConverter().ConvertFromString("#F3F3F3")!;
-        var border = (Brush)new BrushConverter().ConvertFromString("#555555")!;
-
         calendar.Background = darkBackground;
         calendar.Foreground = lightText;
         calendar.BorderBrush = border;
-
-        if (popupRoot is Border popupBorder)
-        {
-            popupBorder.Background = darkBackground;
-            popupBorder.BorderBrush = border;
-        }
-        else if (popupRoot is Panel popupPanel)
-        {
-            popupPanel.Background = darkBackground;
-        }
 
         var dayStyle = new Style(typeof(CalendarDayButton));
         dayStyle.Setters.Add(new Setter(Control.BackgroundProperty, midBackground));
@@ -95,6 +88,33 @@ public partial class App : Application
         itemStyle.Setters.Add(new Setter(Control.BackgroundProperty, darkBackground));
         itemStyle.Setters.Add(new Setter(Control.ForegroundProperty, lightText));
         calendar.Resources[typeof(CalendarItem)] = itemStyle;
+    }
+
+    private static void ApplyDarkThemeRecursive(DependencyObject root, Brush darkBackground, Brush midBackground, Brush lightText, Brush border)
+    {
+        switch (root)
+        {
+            case Border b:
+                b.Background = darkBackground;
+                b.BorderBrush = border;
+                break;
+            case Panel p:
+                p.Background = darkBackground;
+                break;
+            case Control c:
+                c.Background = midBackground;
+                c.Foreground = lightText;
+                c.BorderBrush = border;
+                break;
+            case TextBlock t:
+                t.Foreground = lightText;
+                break;
+        }
+
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            ApplyDarkThemeRecursive(VisualTreeHelper.GetChild(root, i), darkBackground, midBackground, lightText, border);
+        }
     }
 
     private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
