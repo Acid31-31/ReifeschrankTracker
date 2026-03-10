@@ -10,7 +10,7 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkBrushKey}" Color="#1E1E1E" />
         <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#F3F3F3" />
         <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#F3F3F3" />
-        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#0A84FF" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#2F3F52" />
         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF" />
 
         <Style TargetType="TextBlock">
@@ -47,10 +47,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.97" />
+                                <Setter Property="Opacity" Value="0.90" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Opacity" Value="0.94" />
+                                <Setter Property="Opacity" Value="0.85" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.55" />
@@ -156,11 +156,11 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
-                                <Setter Property="Background" Value="#0A84FF" />
+                                <Setter Property="Background" Value="#2F3F52" />
                                 <Setter Property="Foreground" Value="#FFFFFF" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="#0A84FF" />
+                                <Setter Property="Background" Value="#2F3F52" />
                                 <Setter Property="Foreground" Value="#FFFFFF" />
                             </Trigger>
                         </ControlTemplate.Triggers>
