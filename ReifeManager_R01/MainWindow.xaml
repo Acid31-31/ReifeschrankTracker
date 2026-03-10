@@ -35,7 +35,7 @@
                                   BorderBrush="#555555" />
                         <Button Content="Info"
                                 Command="{Binding ProfilInfoAnzeigenCommand}"
-                                Background="#4444AA"
+                                Background="#292966"
                                 Height="30"
                                 Width="62"
                                 Margin="8,0,0,0" />
