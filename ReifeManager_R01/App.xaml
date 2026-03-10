@@ -148,53 +148,56 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#555555" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="4,2" />
-            <Setter Property="MinWidth" Value="145" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="DatePicker">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="24" />
-                            </Grid.ColumnDefinitions>
-                            <DatePickerTextBox x:Name="PART_TextBox"
-                                               Grid.Column="0"
-                                               Background="#333333"
-                                               Foreground="#F3F3F3"
-                                               BorderBrush="#555555"
-                                               BorderThickness="1" />
-                            <Button x:Name="PART_Button"
-                                    Grid.Column="1"
-                                    Content="📅"
-                                    Background="#2A2A2A"
-                                    Foreground="#F3F3F3"
-                                    BorderBrush="#555555"
-                                    BorderThickness="1"
-                                    Padding="0" />
-                            <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
-                                <Border Background="#1E1E1E" BorderBrush="#555555" BorderThickness="1" Padding="6">
-                                    <Calendar x:Name="PART_Calendar"
-                                              Background="#1E1E1E"
-                                              Foreground="#F3F3F3"
-                                              BorderBrush="#555555"
-                                              BorderThickness="1" />
-                                </Border>
-                            </Popup>
-                        </Grid>
+                        <Border Background="#333333" BorderBrush="#555555" BorderThickness="1" CornerRadius="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="26" />
+                                </Grid.ColumnDefinitions>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"
+                                                   Background="Transparent"
+                                                   Foreground="#F3F3F3"
+                                                   BorderThickness="0"
+                                                   Padding="8,4"
+                                                   FontSize="15" />
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="1"
+                                        Content="📅"
+                                        Background="#2A2A2A"
+                                        Foreground="#F3F3F3"
+                                        BorderBrush="#555555"
+                                        BorderThickness="1,0,0,0"
+                                        Padding="0" />
+                                <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                    <Border Background="#2A2A2A" BorderBrush="#555555" BorderThickness="1" Padding="6">
+                                        <Calendar x:Name="PART_Calendar"
+                                                  Background="#2A2A2A"
+                                                  Foreground="#F3F3F3"
+                                                  BorderBrush="#555555"
+                                                  BorderThickness="1" />
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
         <Style TargetType="DatePickerTextBox">
-            <Setter Property="Background" Value="#333333" />
+            <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="#F3F3F3" />
-            <Setter Property="BorderBrush" Value="#555555" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="3,1" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="FontSize" Value="15" />
         </Style>
 
         <Style TargetType="Calendar">
