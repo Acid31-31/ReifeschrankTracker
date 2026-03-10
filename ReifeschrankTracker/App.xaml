@@ -8,6 +8,147 @@
         <converters:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverse"/>
         <converters:StringToVisibilityConverter x:Key="StringToVisibility"/>
 
+        <!-- ── Dark Theme Palette ─────────────────────────────────────────── -->
+        <SolidColorBrush x:Key="Dark.Bg"          Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="Dark.Surface"     Color="#252526"/>
+        <SolidColorBrush x:Key="Dark.Surface2"    Color="#2D2D30"/>
+        <SolidColorBrush x:Key="Dark.Border"      Color="#3F3F46"/>
+        <SolidColorBrush x:Key="Dark.Fg"          Color="#F1F1F1"/>
+        <SolidColorBrush x:Key="Dark.Fg.Muted"    Color="#999999"/>
+        <SolidColorBrush x:Key="Dark.Accent"      Color="#0E639C"/>
+        <SolidColorBrush x:Key="Dark.AccentHover" Color="#1177BB"/>
+        <SolidColorBrush x:Key="Dark.Selection"   Color="#264F78"/>
+        <SolidColorBrush x:Key="Dark.Highlight"   Color="#094771"/>
+
+        <!-- TextBlock -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Dark.Fg}"/>
+        </Style>
+
+        <!-- TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background"     Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"     Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush"    Value="{StaticResource Dark.Border}"/>
+            <Setter Property="CaretBrush"     Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource Dark.Selection}"/>
+            <Setter Property="Padding"        Value="4,3"/>
+        </Style>
+
+        <!-- Button -->
+        <Style TargetType="Button">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+            <Setter Property="Padding"     Value="8,4"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.AccentHover}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Accent}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground" Value="{StaticResource Dark.Fg}"/>
+            <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Highlight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ListBox -->
+        <Style TargetType="ListBox">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="Padding"    Value="4,2"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Selection}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Highlight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- GridSplitter -->
+        <Style TargetType="GridSplitter">
+            <Setter Property="Background" Value="{StaticResource Dark.Border}"/>
+        </Style>
+
+        <!-- DataGrid -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background"               Value="{StaticResource Dark.Surface}"/>
+            <Setter Property="Foreground"               Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource Dark.Border}"/>
+            <Setter Property="RowBackground"            Value="{StaticResource Dark.Surface}"/>
+            <Setter Property="AlternatingRowBackground" Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource Dark.Border}"/>
+            <Setter Property="VerticalGridLinesBrush"   Value="{StaticResource Dark.Border}"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+            <Setter Property="Padding"     Value="8,4"/>
+            <Setter Property="FontWeight"  Value="SemiBold"/>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource Dark.Fg}"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Selection}"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Dark.Highlight}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background"  Value="{StaticResource Dark.Selection}"/>
+                    <Setter Property="Foreground"  Value="White"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Dark.Selection}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- DatePicker -->
+        <Style TargetType="DatePicker">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+        </Style>
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="Background"     Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"     Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource Dark.Selection}"/>
+            <Setter Property="CaretBrush"     Value="{StaticResource Dark.Fg}"/>
+        </Style>
+
         <!-- ── Dark Calendar Palette ───────────────────────────────────── -->
         <SolidColorBrush x:Key="Cal.Bg"          Color="#252526"/>
         <SolidColorBrush x:Key="Cal.Border"      Color="#3F3F46"/>

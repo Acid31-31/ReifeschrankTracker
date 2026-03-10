@@ -4,18 +4,19 @@
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:vm="clr-namespace:ReifeschrankTracker.ViewModels"
         Title="Reifeschrank Tracker" Height="700" Width="1100"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Background="#1E1E1E" Foreground="#F1F1F1">
     <Window.Resources>
         <Style x:Key="KPI" TargetType="Border">
-            <Setter Property="Background" Value="#F8F9FA"/>
-            <Setter Property="BorderBrush" Value="#DEE2E6"/>
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="Margin" Value="4"/>
         </Style>
         <Style x:Key="KPILabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#6C757D"/>
+            <Setter Property="Foreground" Value="#999999"/>
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Margin" Value="0,0,0,2"/>
         </Style>
@@ -80,7 +81,7 @@
                     </TextBlock>
 
                     <!-- Warnbadge -->
-                    <Border Background="#FFF3CD" BorderBrush="#FFC107" BorderThickness="1" CornerRadius="4" Padding="8,4" Margin="0,4,0,4"
+                    <Border Background="#3D2B00" BorderBrush="#FFC107" BorderThickness="1" CornerRadius="4" Padding="8,4" Margin="0,4,0,4"
                             Visibility="{Binding HatWarnung, Converter={StaticResource BoolToVisibility}}">
                         <TextBlock Text="{Binding WarnBadge}" FontWeight="Bold"/>
                     </Border>

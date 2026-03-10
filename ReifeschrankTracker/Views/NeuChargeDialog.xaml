@@ -4,7 +4,8 @@
         Title="Neue Charge anlegen"
         Width="450" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="#1E1E1E" Foreground="#F1F1F1">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
