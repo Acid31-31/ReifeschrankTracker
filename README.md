@@ -4,6 +4,24 @@ Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrock
 
 ---
 
+## 🚨 `Aktualisieren.ps1` fehlt auf deinem PC? – SOFORT-LÖSUNG
+
+Das Skript muss **einmalig heruntergeladen** werden. Danach reicht immer nur noch ein Doppelklick.
+
+### Einmalige Einrichtung – sage deiner KI genau das:
+
+**Öffne Copilot in Visual Studio (Strg+Alt+I) und kopiere diesen Text rein:**
+
+```
+Führe diesen PowerShell-Befehl im Terminal aus:
+
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main/Aktualisieren.ps1" -OutFile "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisieren.ps1"; Write-Host "Fertig! Datei wurde gespeichert."
+```
+
+> ✅ Danach findest du `Aktualisieren.ps1` in deinem Projektordner und kannst es per Doppelklick starten.
+
+---
+
 ## ⚡ SO AKTUALISIERST DU DAS PROGRAMM – 2 Wege
 
 ---
@@ -26,16 +44,12 @@ Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrock
 ```
 Führe diese Befehle der Reihe nach im Terminal aus und zeige mir das Ergebnis:
 
-cd C:\DEIN\PROJEKTORDNER
+git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin main
 
-git pull origin main
+dotnet build "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\ReifeschrankTracker\ReifeschrankTracker.csproj" --configuration Release
 
-dotnet build ReifeschrankTracker\ReifeschrankTracker.csproj --configuration Release
-
-dotnet run --project ReifeschrankTracker\ReifeschrankTracker.csproj
+dotnet run --project "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\ReifeschrankTracker\ReifeschrankTracker.csproj"
 ```
-
-> ⚠️ Ersetze `C:\DEIN\PROJEKTORDNER` durch den echten Pfad auf deinem PC, z. B. `C:\Users\DeinName\source\repos\ReifeschrankTracker`
 
 ---
 

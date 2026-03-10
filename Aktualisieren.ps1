@@ -16,11 +16,13 @@ Set-Location $scriptDir
 
 # ---- Schritt 1: Neuesten Code von GitHub laden ----
 Write-Host "[1/3] Lade neuesten Code von GitHub..." -ForegroundColor Yellow
-git pull origin main 2>&1 | Out-Null
+$pullResult = git pull origin main 2>&1
+$pullOutput = $pullResult | Out-String
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host ""
-    Write-Host "HINWEIS: 'git pull' schlug fehl – versuche alternativen Weg..." -ForegroundColor Yellow
+    Write-Host "HINWEIS: 'git pull' schlug fehl – versuche direkten Download..." -ForegroundColor Yellow
+    Write-Host $pullOutput -ForegroundColor Gray
 
     # Fallback: einzelne Dateien direkt von GitHub herunterladen
     $baseUrl = "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main"
