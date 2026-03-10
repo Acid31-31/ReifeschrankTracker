@@ -4,6 +4,15 @@
              xmlns:local="clr-namespace:ReifeManager_R01"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#1E1E1E" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#2A2A2A" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlLightBrushKey}" Color="#2A2A2A" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkBrushKey}" Color="#1E1E1E" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#F3F3F3" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#F3F3F3" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#0A84FF" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF" />
+
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="#F3F3F3" />
         </Style>
