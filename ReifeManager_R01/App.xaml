@@ -156,74 +156,28 @@
         <Style TargetType="Calendar">
             <Setter Property="Background" Value="#1E1E1E" />
             <Setter Property="Foreground" Value="#F3F3F3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Calendar">
-                        <StackPanel x:Name="PART_Root" Background="#1E1E1E" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <CalendarItem x:Name="PART_CalendarItem" 
-                                          Background="#1E1E1E"
-                                          BorderBrush="#555555"
-                                          BorderThickness="1" />
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="BorderBrush" Value="#555555" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style TargetType="CalendarItem">
+            <Setter Property="Background" Value="#1E1E1E" />
+            <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="BorderBrush" Value="#555555" />
         </Style>
 
         <Style TargetType="CalendarDayButton">
             <Setter Property="Background" Value="#2A2A2A" />
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="1" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CalendarDayButton">
-                        <Border x:Name="border" Background="#2A2A2A" BorderBrush="#444444" BorderThickness="1" Padding="8,4">
-                            <Grid>
-                                <TextBlock x:Name="text" Text="{Binding}" Foreground="#F3F3F3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" />
-                                <Rectangle x:Name="TodayBackground" Fill="Transparent" />
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#333333" />
-                                <Setter TargetName="text" Property="Foreground" Value="#FFFFFF" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#0A84FF" />
-                                <Setter TargetName="text" Property="Foreground" Value="#FFFFFF" />
-                            </Trigger>
-                            <Trigger Property="IsToday" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1E5A96" />
-                                <Setter TargetName="text" Property="Foreground" Value="#FFD54F" />
-                            </Trigger>
-                            <Trigger Property="IsInactive" Value="True">
-                                <Setter TargetName="text" Property="Foreground" Value="#888888" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style TargetType="CalendarButton">
             <Setter Property="Background" Value="#2A2A2A" />
             <Setter Property="Foreground" Value="#F3F3F3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CalendarButton">
-                        <Border x:Name="border" Background="#2A2A2A" BorderBrush="#444444" BorderThickness="1" Padding="8,4" Margin="1">
-                            <TextBlock Text="{Binding}" Foreground="#F3F3F3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#333333" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="BorderBrush" Value="#444444" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
 
         <Style TargetType="DataGrid">
@@ -247,73 +201,6 @@
             <Setter Property="Background" Value="#222222" />
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
-        </Style>
-
-        <Style TargetType="CalendarItem">
-            <Setter Property="Background" Value="#1E1E1E" />
-            <Setter Property="Foreground" Value="#F3F3F3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CalendarItem">
-                        <Grid Background="#1E1E1E">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <!-- HEADER: Monat/Jahr mit Navigation -->
-                            <Border Grid.Row="0" Background="#2A2A2A" BorderBrush="#555555" BorderThickness="0,0,0,2" Padding="8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="40" />
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <!-- Prev Button -->
-                                    <Button x:Name="PART_PreviousButton" Grid.Column="0" Content="‹" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
-                                    
-                                    <!-- Monat/Jahr - DUNKELGELB auf DUNKEL -->
-                                    <Border Grid.Column="1" Background="#333333" BorderBrush="#555555" BorderThickness="1" CornerRadius="3" Padding="8,4">
-                                        <TextBlock x:Name="PART_HeaderButton" Text="{Binding}" Foreground="#FFD54F" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" />
-                                    </Border>
-                                    
-                                    <!-- Next Button -->
-                                    <Button x:Name="PART_NextButton" Grid.Column="2" Content="›" Background="Transparent" Foreground="#F3F3F3" FontSize="20" BorderThickness="0" Padding="0" />
-                                </Grid>
-                            </Border>
-
-                            <!-- WOCHENTAGE: Mo, Di, Mi, Do, Fr, Sa, So -->
-                            <Border Grid.Row="1" Background="#222222" BorderBrush="#444444" BorderThickness="0,0,0,1" Padding="2">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Mo" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="1" Text="Di" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="2" Text="Mi" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="3" Text="Do" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="4" Text="Fr" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="5" Text="Sa" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                    <TextBlock Grid.Column="6" Text="So" Foreground="#999999" HorizontalAlignment="Center" FontSize="11" FontWeight="Bold" Padding="2" />
-                                </Grid>
-                            </Border>
-
-                            <!-- TAGE GRID -->
-                            <Grid x:Name="PART_MonthView" Grid.Row="2" Background="#1E1E1E" Margin="2">
-                                <ItemsPresenter />
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
     </Application.Resources>
 </Application>
