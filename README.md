@@ -4,79 +4,56 @@ Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrock
 
 ---
 
-## 🚨 `Aktualisieren.ps1` fehlt auf deinem PC? – SOFORT-LÖSUNG
+## ⚡ JETZT SOFORT STARTEN – 3 Befehle im PowerShell-Terminal
 
-Das Skript muss **einmalig heruntergeladen** werden. Danach reicht immer nur noch ein Doppelklick.
+Du hast bereits den Projektordner auf dem PC. Öffne dein **PowerShell-Terminal** (z. B. Visual Studio Developer PowerShell) und führe diese 3 Befehle der Reihe nach aus:
 
-### Einmalige Einrichtung – sage deiner KI genau das:
-
-**Öffne Copilot in Visual Studio (Strg+Alt+I) und kopiere diesen Text rein:**
-
+```powershell
+git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin copilot/implement-reifeschrank-tracker
 ```
-Führe diesen PowerShell-Befehl im Terminal aus:
-
-$dest = "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisieren.ps1"; try { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main/Aktualisieren.ps1" -OutFile $dest -UseBasicParsing -ErrorAction Stop } catch { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/copilot/implement-reifeschrank-tracker/Aktualisieren.ps1" -OutFile $dest -UseBasicParsing }; Write-Host "Fertig! Datei wurde gespeichert."
-```
-
-> ✅ Danach findest du `Aktualisieren.ps1` in deinem Projektordner.
->
-> **Nächster Schritt:** Doppelklick auf `Aktualisieren.ps1` – das Programm wird gebaut und gestartet.
->
-> _(Der Befehl versucht zuerst `main`; fällt automatisch auf den PR-Branch zurück, solange der PR noch nicht gemergt ist.)_
-
----
-
-## ⚡ SO AKTUALISIERST DU DAS PROGRAMM – 2 Wege
-
----
-
-### 🟢 Weg 1 – Doppelklick (einfachster Weg, kein Wissen nötig)
-
-1. Öffne den Projektordner auf deinem PC
-2. Doppelklick auf **`Aktualisieren.ps1`**
-3. Falls Windows fragt: **„Ja, ausführen"** klicken
-4. Das Skript lädt alles neu, baut das Programm und startet es automatisch ✅
-
-> ⚠️ Falls Windows das Skript blockiert: Rechtsklick auf `Aktualisieren.ps1` → **„Mit PowerShell ausführen"**
-
----
-
-### 🤖 Weg 2 – Befehl an deine KI (z. B. Copilot in Visual Studio)
-
-**Öffne deinen KI-Chat** (in Visual Studio: **Strg+Alt+I**) und **kopiere diesen Text genau so rein:**
-
-```
-Führe diese Befehle der Reihe nach im Terminal aus und zeige mir das Ergebnis:
-
-git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin main
-
+```powershell
 dotnet build "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\ReifeschrankTracker\ReifeschrankTracker.csproj" --configuration Release
-
+```
+```powershell
 dotnet run --project "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\ReifeschrankTracker\ReifeschrankTracker.csproj"
 ```
 
+> ✅ Danach startet das Programm mit **dunklem Kalender-Popup**.
+
 ---
 
-## 🔵 Den grünen Knopf drücken – So kriegst du ALLE Updates auf einmal
+## 🔄 Automatisch updaten per Doppelklick (für später)
 
-Du musst das NUR EINMAL machen. Danach läuft `Aktualisieren.ps1` für immer.
+Sobald `Aktualisieren.ps1` in deinem Projektordner liegt, reicht immer nur ein **Doppelklick** darauf – kein weiteres Tippen nötig.
+
+### `Aktualisieren.ps1` noch nicht vorhanden? Einmalig im Terminal ausführen:
+
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/copilot/implement-reifeschrank-tracker/Aktualisieren.ps1" -OutFile "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisieren.ps1"; Write-Host "Fertig!"
+```
+
+> Danach: Doppelklick auf `Aktualisieren.ps1` im Projektordner → alles wird automatisch geladen, gebaut und gestartet.
+
+---
+
+## 🔵 Updates dauerhaft auf den Hauptzweig (main) bringen
+
+Du musst das **nur einmal** machen. Danach zeigt der Kalender immer dunkel.
 
 ### Schritt 1 – Gehe auf diese Seite:
 👉 **https://github.com/Acid31-31/ReifeschrankTracker/pull/1**
 
 ### Schritt 2 – Klicke auf „Ready for review"
-Du siehst einen grauen Knopf mit dem Text **„Ready for review"** – einmal draufklicken.
+Grauer Knopf oben → einmal klicken.
 
-### Schritt 3 – Klicke auf den grünen Knopf
-Jetzt erscheint ein grüner Knopf **„Merge pull request"** – draufklicken, dann nochmal **„Confirm merge"** klicken.
+### Schritt 3 – Grünen Knopf klicken
+Grüner Knopf **„Merge pull request"** → klicken, dann **„Confirm merge"**.
 
-### Schritt 4 – Sage deiner KI:
-```
-Führe im Terminal aus:
+### Schritt 4 – Dann im Terminal:
+```powershell
 git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin main
+dotnet run --project "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\ReifeschrankTracker\ReifeschrankTracker.csproj"
 ```
-
-✅ Danach ist `Aktualisieren.ps1` bei dir und du kannst es per Doppelklick starten.
 
 ---
 

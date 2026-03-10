@@ -209,7 +209,13 @@
                                             BorderThickness="1"
                                             CornerRadius="2"
                                             Padding="1">
-                                        <Calendar x:Name="PART_Calendar"/>
+                                        <!-- Force dark colors directly on the Calendar instance,
+                                             in addition to the implicit Calendar style above -->
+                                        <Calendar x:Name="PART_Calendar"
+                                                  Background="#252526"
+                                                  Foreground="#ECECEC"
+                                                  BorderBrush="#3F3F46"
+                                                  BorderThickness="0"/>
                                     </Border>
                                 </Popup>
                             </Grid>
@@ -438,12 +444,23 @@
             </Setter>
         </Style>
 
-        <!-- Calendar wrapper ────────────────────────────────────────────── -->
+        <!-- Calendar wrapper – full ControlTemplate to override white Aero2 default ── -->
         <Style TargetType="Calendar">
             <Setter Property="Background"      Value="{StaticResource Cal.Bg}"/>
             <Setter Property="Foreground"      Value="{StaticResource Cal.Fg}"/>
             <Setter Property="BorderBrush"     Value="{StaticResource Cal.Border}"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Calendar">
+                        <!-- Bypass the Aero2 default entirely; render CalendarItem directly -->
+                        <CalendarItem x:Name="PART_CalendarItem"
+                                      Background="{StaticResource Cal.Bg}"
+                                      BorderBrush="{StaticResource Cal.Border}"
+                                      BorderThickness="0"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
     </Application.Resources>

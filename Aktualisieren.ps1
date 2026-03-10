@@ -3,9 +3,9 @@
 #  Doppelklick auf diese Datei genügt!
 # ============================================================
 
-# Fallback-Branch, solange der PR noch nicht in main gemergt wurde.
-# Nach dem Merge kann dieser Wert auf "main" geändert oder entfernt werden.
-$fallbackBranch = "copilot/implement-reifeschrank-tracker"
+# Aktueller Quell-Branch mit dem neuesten Code.
+# Sobald der PR in main gemergt wurde, diesen Wert auf "main" ändern.
+$sourceBranch = "copilot/implement-reifeschrank-tracker"
 
 $Host.UI.RawUI.WindowTitle = "ReifeschrankTracker – Aktualisieren"
 Write-Host ""
@@ -19,16 +19,15 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $scriptDir
 
 # ---- Schritt 1: Neuesten Code von GitHub laden ----
-Write-Host "[1/3] Lade neuesten Code von GitHub..." -ForegroundColor Yellow
+Write-Host "[1/3] Lade neuesten Code von GitHub ($sourceBranch)..." -ForegroundColor Yellow
 
-$pullResult = git pull origin main 2>&1
+$pullResult = git pull origin $sourceBranch 2>&1
 $pullOutput = $pullResult | Out-String
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "  HINWEIS: 'git pull origin main' schlug fehl." -ForegroundColor Yellow
+    Write-Host "  HINWEIS: 'git pull origin $sourceBranch' schlug fehl – versuche main..." -ForegroundColor Yellow
     Write-Host $pullOutput -ForegroundColor Gray
-    Write-Host "  Versuche Fallback-Branch..." -ForegroundColor Yellow
-    $pullResult2 = git pull origin $fallbackBranch 2>&1
+    $pullResult2 = git pull origin main 2>&1
     $pullOutput2 = $pullResult2 | Out-String
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  FEHLER: Konnte Code nicht von GitHub laden." -ForegroundColor Red
@@ -40,12 +39,12 @@ if ($LASTEXITCODE -ne 0) {
     }
 }
 
-# Prüfen ob das neue Projekt-Verzeichnis vorhanden ist; falls nicht, PR-Branch direkt auschecken
+# Prüfen ob das Projekt-Verzeichnis vorhanden ist
 $projPath = Join-Path $scriptDir "ReifeschrankTracker\ReifeschrankTracker.csproj"
 if (-not (Test-Path $projPath)) {
     Write-Host ""
-    Write-Host "  Neue Projektdateien noch nicht in main – lade direkt vom Update-Branch..." -ForegroundColor Yellow
-    $fetchResult = git fetch origin $fallbackBranch 2>&1
+    Write-Host "  Projektdateien fehlen – lade direkt vom Branch..." -ForegroundColor Yellow
+    $fetchResult    = git fetch origin $sourceBranch 2>&1
     $checkoutResult = git checkout FETCH_HEAD -- ReifeschrankTracker ReifeschrankTracker.sln 2>&1
     if (-not (Test-Path $projPath)) {
         Write-Host "  FEHLER: Projektdateien konnten nicht geladen werden." -ForegroundColor Red
