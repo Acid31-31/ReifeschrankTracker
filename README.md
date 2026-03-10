@@ -4,56 +4,38 @@ Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrock
 
 ---
 
-## 🤖 KI-Befehl – Alles automatisch aktualisieren
-
-> **Kopiere diesen Text und füge ihn in deinen KI-Chat (z. B. GitHub Copilot in Visual Studio) ein:**
-
-```
-Bitte führe folgende Schritte automatisch aus:
-1. Öffne ein Terminal im Projektordner
-2. Führe aus: git checkout main
-3. Führe aus: git pull origin main
-4. Führe aus: dotnet build ReifeschrankTracker/ReifeschrankTracker.csproj
-Zeige mir das Ergebnis.
-```
-
-> ℹ️ **Hinweis:** GitHub Copilot öffnest du in Visual Studio mit **Strg+Alt+I** oder über das Menü **Ansicht → GitHub Copilot Chat**.
+## ⚡ SO AKTUALISIERST DU DAS PROGRAMM – 2 Wege
 
 ---
 
-## Voraussetzungen
+### 🟢 Weg 1 – Doppelklick (einfachster Weg, kein Wissen nötig)
 
-- Windows 10 oder neuer
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) mit der Workload **.NET-Desktopentwicklung**
-- .NET 8 SDK
+1. Öffne den Projektordner auf deinem PC
+2. Doppelklick auf **`Aktualisieren.ps1`**
+3. Falls Windows fragt: **„Ja, ausführen"** klicken
+4. Das Skript lädt alles neu, baut das Programm und startet es automatisch ✅
 
-## 🔄 Änderungen von GitHub auf deinen PC übertragen
+> ⚠️ Falls Windows das Skript blockiert: Rechtsklick auf `Aktualisieren.ps1` → **„Mit PowerShell ausführen"**
 
-Wenn du (oder GitHub Copilot) Änderungen auf GitHub gemacht hat und du sie lokal sehen willst, musst du diese Schritte ausführen:
+---
 
-### Schritt 1 – Pull Request mergen (auf GitHub.com)
+### 🤖 Weg 2 – Befehl an deine KI (z. B. Copilot in Visual Studio)
 
-1. Gehe zu **https://github.com/Acid31-31/ReifeschrankTracker**
-2. Klicke oben auf **„Pull requests"**
-3. Öffne den offenen Pull Request
-4. Klicke auf **„Merge pull request"** → **„Confirm merge"**
+**Öffne deinen KI-Chat** (in Visual Studio: **Strg+Alt+I**) und **kopiere diesen Text genau so rein:**
 
-### Schritt 2 – Änderungen in Visual Studio herunterladen
+```
+Führe diese Befehle der Reihe nach im Terminal aus und zeige mir das Ergebnis:
 
-**Option A – In Visual Studio (empfohlen):**
-1. Öffne dein Projekt in Visual Studio
-2. Klicke oben in der Menüleiste auf **Git** → **Pullen** (oder **Git → Pull**)
-3. Die Änderungen werden automatisch heruntergeladen
+cd C:\DEIN\PROJEKTORDNER
 
-**Option B – Per Git-Befehl im Terminal:**
-```cmd
-git checkout main
 git pull origin main
+
+dotnet build ReifeschrankTracker\ReifeschrankTracker.csproj --configuration Release
+
+dotnet run --project ReifeschrankTracker\ReifeschrankTracker.csproj
 ```
 
-> 💡 **Tipp für Copilot-Nutzer:** Sage deiner KI in Visual Studio:
-> `„Merge den Pull Request und pullen die neuesten Änderungen von GitHub"` –
-> oder führe einfach **Git → Pull** in Visual Studio durch.
+> ⚠️ Ersetze `C:\DEIN\PROJEKTORDNER` durch den echten Pfad auf deinem PC, z. B. `C:\Users\DeinName\source\repos\ReifeschrankTracker`
 
 ---
 
