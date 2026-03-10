@@ -3,6 +3,10 @@
 #  Doppelklick auf diese Datei genügt!
 # ============================================================
 
+# Fallback-Branch, solange der PR noch nicht in main gemergt wurde.
+# Nach dem Merge kann dieser Wert auf "main" geändert oder entfernt werden.
+$fallbackBranch = "copilot/implement-reifeschrank-tracker"
+
 $Host.UI.RawUI.WindowTitle = "ReifeschrankTracker – Aktualisieren"
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
@@ -16,33 +20,41 @@ Set-Location $scriptDir
 
 # ---- Schritt 1: Neuesten Code von GitHub laden ----
 Write-Host "[1/3] Lade neuesten Code von GitHub..." -ForegroundColor Yellow
+
 $pullResult = git pull origin main 2>&1
 $pullOutput = $pullResult | Out-String
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host ""
-    Write-Host "HINWEIS: 'git pull' schlug fehl – versuche direkten Download..." -ForegroundColor Yellow
+    Write-Host "  HINWEIS: 'git pull origin main' schlug fehl." -ForegroundColor Yellow
     Write-Host $pullOutput -ForegroundColor Gray
-
-    # Fallback: einzelne Dateien direkt von GitHub herunterladen
-    $baseUrl = "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main"
-    $files = @(
-        "ReifeschrankTracker/App.xaml",
-        "ReifeschrankTracker/Views/MainWindow.xaml",
-        "ReifeschrankTracker/Views/NeuChargeDialog.xaml",
-        "ReifeschrankTracker/Views/GewichtEintragenDialog.xaml"
-    )
-
-    foreach ($file in $files) {
-        $url  = "$baseUrl/$file"
-        $dest = Join-Path $scriptDir $file
-        try {
-            Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing -ErrorAction Stop
-            Write-Host "  OK: $file" -ForegroundColor Green
-        } catch {
-            Write-Host "  FEHLER beim Download: $file" -ForegroundColor Red
-        }
+    Write-Host "  Versuche Fallback-Branch..." -ForegroundColor Yellow
+    $pullResult2 = git pull origin copilot/implement-reifeschrank-tracker 2>&1
+    $pullOutput2 = $pullResult2 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  FEHLER: Konnte Code nicht von GitHub laden." -ForegroundColor Red
+        Write-Host $pullOutput2 -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "Drücke eine Taste zum Beenden..." -ForegroundColor Gray
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        exit 1
     }
+}
+
+# Prüfen ob das neue Projekt-Verzeichnis vorhanden ist; falls nicht, PR-Branch direkt auschecken
+$projPath = Join-Path $scriptDir "ReifeschrankTracker\ReifeschrankTracker.csproj"
+if (-not (Test-Path $projPath)) {
+    Write-Host ""
+    Write-Host "  Neue Projektdateien noch nicht in main – lade direkt vom Update-Branch..." -ForegroundColor Yellow
+    git fetch origin copilot/implement-reifeschrank-tracker 2>&1 | Out-Null
+    git checkout FETCH_HEAD -- ReifeschrankTracker ReifeschrankTracker.sln 2>&1 | Out-Null
+    if (-not (Test-Path $projPath)) {
+        Write-Host "  FEHLER: Projektdateien konnten nicht geladen werden." -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Drücke eine Taste zum Beenden..." -ForegroundColor Gray
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        exit 1
+    }
+    Write-Host "  -> Projektdateien geladen!" -ForegroundColor Green
 }
 
 Write-Host "  -> Code aktualisiert!" -ForegroundColor Green
@@ -50,7 +62,6 @@ Write-Host ""
 
 # ---- Schritt 2: Projekt bauen ----
 Write-Host "[2/3] Baue das Projekt..." -ForegroundColor Yellow
-$projPath = Join-Path $scriptDir "ReifeschrankTracker\ReifeschrankTracker.csproj"
 dotnet build $projPath --configuration Release --nologo 2>&1 | Tee-Object -Variable buildOutput | Out-Null
 
 if ($LASTEXITCODE -ne 0) {

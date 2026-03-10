@@ -15,10 +15,12 @@ Das Skript muss **einmalig heruntergeladen** werden. Danach reicht immer nur noc
 ```
 Führe diesen PowerShell-Befehl im Terminal aus:
 
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main/Aktualisieren.ps1" -OutFile "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisieren.ps1"; Write-Host "Fertig! Datei wurde gespeichert."
+$dest = "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisieren.ps1"; try { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/main/Aktualisieren.ps1" -OutFile $dest -UseBasicParsing -ErrorAction Stop } catch { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Acid31-31/ReifeschrankTracker/copilot/implement-reifeschrank-tracker/Aktualisieren.ps1" -OutFile $dest -UseBasicParsing }; Write-Host "Fertig! Datei wurde gespeichert."
 ```
 
-> ✅ Danach findest du `Aktualisieren.ps1` in deinem Projektordner und kannst es per Doppelklick starten.
+> ✅ Danach findest du `Aktualisieren.ps1` in deinem Projektordner.
+>
+> **Nächster Schritt:** Doppelklick auf `Aktualisieren.ps1` – das Programm wird gebaut und gestartet.
 
 ---
 
@@ -75,6 +77,8 @@ git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin
 ✅ Danach ist `Aktualisieren.ps1` bei dir und du kannst es per Doppelklick starten.
 
 ---
+
+## Erstellen und Starten (Visual Studio)
 
 1. Repository klonen oder ZIP entpacken.
 2. `ReifeschrankTracker.sln` in Visual Studio öffnen.
