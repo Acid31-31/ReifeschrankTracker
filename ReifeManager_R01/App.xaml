@@ -89,37 +89,19 @@
                             <ToggleButton Name="ToggleButton" 
                                           Grid.Column="2" 
                                           Focusable="false"
+                                          OverridesDefaultStyle="True"
                                           IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                           ClickMode="Press"
                                           Background="{TemplateBinding Background}"
                                           BorderBrush="{TemplateBinding BorderBrush}"
                                           BorderThickness="{TemplateBinding BorderThickness}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="20" />
-                                    </Grid.ColumnDefinitions>
-                                    <ContentPresenter Grid.Column="0" 
-                                                      Name="ContentSite"
-                                                      IsHitTestVisible="False" 
-                                                      Content="{TemplateBinding SelectionBoxItem}"
-                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                      Margin="6,3,0,3"
-                                                      VerticalAlignment="Center"
-                                                      HorizontalAlignment="Left">
-                                        <ContentPresenter.Resources>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="#F3F3F3" />
-                                            </Style>
-                                        </ContentPresenter.Resources>
-                                    </ContentPresenter>
-                                    <Path Grid.Column="1" 
-                                          HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center" 
-                                          Data="M 0 0 L 4 4 L 8 0 Z" 
-                                          Fill="#F3F3F3" />
-                                </Grid>
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter />
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
                             </ToggleButton>
                             <Popup Name="Popup" 
                                    Placement="Bottom" 
