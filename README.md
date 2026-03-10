@@ -53,7 +53,28 @@ dotnet run --project "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracke
 
 ---
 
-## Erstellen und Starten (Visual Studio)
+## 🔵 Den grünen Knopf drücken – So kriegst du ALLE Updates auf einmal
+
+Du musst das NUR EINMAL machen. Danach läuft `Aktualisieren.ps1` für immer.
+
+### Schritt 1 – Gehe auf diese Seite:
+👉 **https://github.com/Acid31-31/ReifeschrankTracker/pull/1**
+
+### Schritt 2 – Klicke auf „Ready for review"
+Du siehst einen grauen Knopf mit dem Text **„Ready for review"** – einmal draufklicken.
+
+### Schritt 3 – Klicke auf den grünen Knopf
+Jetzt erscheint ein grüner Knopf **„Merge pull request"** – draufklicken, dann nochmal **„Confirm merge"** klicken.
+
+### Schritt 4 – Sage deiner KI:
+```
+Führe im Terminal aus:
+git -C "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker" pull origin main
+```
+
+✅ Danach ist `Aktualisieren.ps1` bei dir und du kannst es per Doppelklick starten.
+
+---
 
 1. Repository klonen oder ZIP entpacken.
 2. `ReifeschrankTracker.sln` in Visual Studio öffnen.
