@@ -136,6 +136,94 @@
             </Style.Triggers>
         </Style>
 
+        <!-- ScrollViewer -->
+        <Style TargetType="ScrollViewer">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- ScrollBar – slim dark scrollbar, no arrow buttons -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="{StaticResource Dark.Surface}"/>
+            <Setter Property="Width"      Value="10"/>
+            <Setter Property="MinWidth"   Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"
+                                                  Background="Transparent" BorderThickness="0"
+                                                  Focusable="False" Opacity="0"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="{StaticResource Dark.Border}"
+                                                        CornerRadius="4" Margin="2,1"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"
+                                                  Background="Transparent" BorderThickness="0"
+                                                  Focusable="False" Opacity="0"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height"    Value="10"/>
+                    <Setter Property="MinHeight" Value="10"/>
+                    <Setter Property="Width"     Value="Auto"/>
+                    <Setter Property="MinWidth"  Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                    <Track x:Name="PART_Track">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageLeftCommand}"
+                                                          Background="Transparent" BorderThickness="0"
+                                                          Focusable="False" Opacity="0"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb>
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Border Background="{StaticResource Dark.Border}"
+                                                                CornerRadius="4" Margin="1,2"/>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+                                        </Track.Thumb>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageRightCommand}"
+                                                          Background="Transparent" BorderThickness="0"
+                                                          Focusable="False" Opacity="0"/>
+                                        </Track.IncreaseRepeatButton>
+                                    </Track>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ToolTip -->
+        <Style TargetType="ToolTip">
+            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
+            <Setter Property="Padding"     Value="6,4"/>
+        </Style>
+
         <!-- ── Dark Calendar Palette ───────────────────────────────────── -->
         <SolidColorBrush x:Key="Cal.Bg"          Color="#252526"/>
         <SolidColorBrush x:Key="Cal.Border"      Color="#3F3F46"/>
