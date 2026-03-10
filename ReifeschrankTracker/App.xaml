@@ -136,19 +136,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- DatePicker -->
-        <Style TargetType="DatePicker">
-            <Setter Property="Background"  Value="{StaticResource Dark.Surface2}"/>
-            <Setter Property="Foreground"  Value="{StaticResource Dark.Fg}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Dark.Border}"/>
-        </Style>
-        <Style TargetType="DatePickerTextBox">
-            <Setter Property="Background"     Value="{StaticResource Dark.Surface2}"/>
-            <Setter Property="Foreground"     Value="{StaticResource Dark.Fg}"/>
-            <Setter Property="SelectionBrush" Value="{StaticResource Dark.Selection}"/>
-            <Setter Property="CaretBrush"     Value="{StaticResource Dark.Fg}"/>
-        </Style>
-
         <!-- ── Dark Calendar Palette ───────────────────────────────────── -->
         <SolidColorBrush x:Key="Cal.Bg"          Color="#252526"/>
         <SolidColorBrush x:Key="Cal.Border"      Color="#3F3F46"/>
@@ -157,6 +144,80 @@
         <SolidColorBrush x:Key="Cal.Accent"      Color="#0E639C"/>
         <SolidColorBrush x:Key="Cal.AccentHover" Color="#1177BB"/>
         <SolidColorBrush x:Key="Cal.Today"       Color="#264F78"/>
+
+        <!-- DatePicker – full ControlTemplate so the popup gets a dark background -->
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="Background"     Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"     Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource Dark.Selection}"/>
+            <Setter Property="CaretBrush"     Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="4,3"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="DatePicker">
+            <Setter Property="Background"      Value="{StaticResource Dark.Surface2}"/>
+            <Setter Property="Foreground"      Value="{StaticResource Dark.Fg}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource Dark.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"/>
+
+                                <!-- Calendar-icon toggle button -->
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="1"
+                                        Focusable="False"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Padding="6,0"
+                                        Cursor="Hand"
+                                        VerticalAlignment="Stretch">
+                                    <Path Data="M3,1 L3,0 M7,1 L7,0 M0,3 L10,3 M0,1 L0,9 L10,9 L10,1 Z
+                                                M2,5 L4,5 M2,7 L4,7 M5,5 L7,5 M5,7 L7,7 M8,5 L10,5"
+                                          Stroke="{TemplateBinding Foreground}"
+                                          StrokeThickness="1"
+                                          Width="10" Height="9"
+                                          Stretch="Uniform"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                                </Button>
+
+                                <!-- Popup – Border here is what was white before -->
+                                <Popup x:Name="PART_Popup"
+                                       Grid.Column="0"
+                                       AllowsTransparency="True"
+                                       Placement="Bottom"
+                                       StaysOpen="False">
+                                    <Border Background="{StaticResource Cal.Bg}"
+                                            BorderBrush="{StaticResource Cal.Border}"
+                                            BorderThickness="1"
+                                            CornerRadius="2"
+                                            Padding="1">
+                                        <Calendar x:Name="PART_Calendar"/>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- CalendarDayButton – individual day cells ──────────────────── -->
         <Style TargetType="CalendarDayButton">

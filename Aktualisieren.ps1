@@ -28,7 +28,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "  HINWEIS: 'git pull origin main' schlug fehl." -ForegroundColor Yellow
     Write-Host $pullOutput -ForegroundColor Gray
     Write-Host "  Versuche Fallback-Branch..." -ForegroundColor Yellow
-    $pullResult2 = git pull origin copilot/implement-reifeschrank-tracker 2>&1
+    $pullResult2 = git pull origin $fallbackBranch 2>&1
     $pullOutput2 = $pullResult2 | Out-String
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  FEHLER: Konnte Code nicht von GitHub laden." -ForegroundColor Red
@@ -45,10 +45,12 @@ $projPath = Join-Path $scriptDir "ReifeschrankTracker\ReifeschrankTracker.csproj
 if (-not (Test-Path $projPath)) {
     Write-Host ""
     Write-Host "  Neue Projektdateien noch nicht in main – lade direkt vom Update-Branch..." -ForegroundColor Yellow
-    git fetch origin copilot/implement-reifeschrank-tracker 2>&1 | Out-Null
-    git checkout FETCH_HEAD -- ReifeschrankTracker ReifeschrankTracker.sln 2>&1 | Out-Null
+    $fetchResult = git fetch origin $fallbackBranch 2>&1
+    $checkoutResult = git checkout FETCH_HEAD -- ReifeschrankTracker ReifeschrankTracker.sln 2>&1
     if (-not (Test-Path $projPath)) {
         Write-Host "  FEHLER: Projektdateien konnten nicht geladen werden." -ForegroundColor Red
+        Write-Host ($fetchResult | Out-String) -ForegroundColor Gray
+        Write-Host ($checkoutResult | Out-String) -ForegroundColor Gray
         Write-Host ""
         Write-Host "Drücke eine Taste zum Beenden..." -ForegroundColor Gray
         $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

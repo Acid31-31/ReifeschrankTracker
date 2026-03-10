@@ -21,6 +21,8 @@ $dest = "$env:USERPROFILE\source\repos\Acid31-31\ReifeschrankTracker\Aktualisier
 > ✅ Danach findest du `Aktualisieren.ps1` in deinem Projektordner.
 >
 > **Nächster Schritt:** Doppelklick auf `Aktualisieren.ps1` – das Programm wird gebaut und gestartet.
+>
+> _(Der Befehl versucht zuerst `main`; fällt automatisch auf den PR-Branch zurück, solange der PR noch nicht gemergt ist.)_
 
 ---
 
