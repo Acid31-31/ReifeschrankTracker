@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using ReifeManager_R01.ViewModels;
 
@@ -16,6 +17,28 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel();
+    }
+
+    private void DashboardScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (sender is not ScrollViewer scrollViewer)
+        {
+            return;
+        }
+
+        var newOffset = scrollViewer.VerticalOffset - (e.Delta / 3.0);
+        if (newOffset < 0)
+        {
+            newOffset = 0;
+        }
+
+        if (newOffset > scrollViewer.ScrollableHeight)
+        {
+            newOffset = scrollViewer.ScrollableHeight;
+        }
+
+        scrollViewer.ScrollToVerticalOffset(newOffset);
+        e.Handled = true;
     }
 
     private void StueckeGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

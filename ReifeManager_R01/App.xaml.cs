@@ -52,8 +52,8 @@ public partial class App : Application
             return;
         }
 
-        var darkBackground = (Brush)new BrushConverter().ConvertFromString("#1E1E1E")!;
-        var midBackground = (Brush)new BrushConverter().ConvertFromString("#2A2A2A")!;
+        var darkBackground = (Brush)new BrushConverter().ConvertFromString("#2A2A2A")!;
+        var midBackground = (Brush)new BrushConverter().ConvertFromString("#333333")!;
         var lightText = (Brush)new BrushConverter().ConvertFromString("#F3F3F3")!;
         var border = (Brush)new BrushConverter().ConvertFromString("#555555")!;
 
