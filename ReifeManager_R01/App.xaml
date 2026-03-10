@@ -151,6 +151,41 @@
             <Setter Property="Padding" Value="4,2" />
             <Setter Property="MinWidth" Value="145" />
             <Setter Property="Height" Value="30" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="24" />
+                            </Grid.ColumnDefinitions>
+                            <DatePickerTextBox x:Name="PART_TextBox"
+                                               Grid.Column="0"
+                                               Background="#333333"
+                                               Foreground="#F3F3F3"
+                                               BorderBrush="#555555"
+                                               BorderThickness="1" />
+                            <Button x:Name="PART_Button"
+                                    Grid.Column="1"
+                                    Content="📅"
+                                    Background="#2A2A2A"
+                                    Foreground="#F3F3F3"
+                                    BorderBrush="#555555"
+                                    BorderThickness="1"
+                                    Padding="0" />
+                            <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                <Border Background="#1E1E1E" BorderBrush="#555555" BorderThickness="1" Padding="6">
+                                    <Calendar x:Name="PART_Calendar"
+                                              Background="#1E1E1E"
+                                              Foreground="#F3F3F3"
+                                              BorderBrush="#555555"
+                                              BorderThickness="1" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DatePickerTextBox">
@@ -180,6 +215,23 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarDayButton">
+                        <Border x:Name="dayBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="dayBorder" Property="Background" Value="#3A3A3A" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="dayBorder" Property="Background" Value="#0A84FF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="CalendarButton">
@@ -187,6 +239,20 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarButton">
+                        <Border x:Name="calBtnBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="calBtnBorder" Property="Background" Value="#3A3A3A" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DataGrid">
