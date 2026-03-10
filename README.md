@@ -2,6 +2,25 @@
 
 Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrocknen).
 
+---
+
+## 🤖 KI-Befehl – Alles automatisch aktualisieren
+
+> **Kopiere diesen Text und füge ihn in deinen KI-Chat (z. B. GitHub Copilot in Visual Studio) ein:**
+
+```
+Bitte führe folgende Schritte automatisch aus:
+1. Öffne ein Terminal im Projektordner
+2. Führe aus: git checkout main
+3. Führe aus: git pull origin main
+4. Führe aus: dotnet build ReifeschrankTracker/ReifeschrankTracker.csproj
+Zeige mir das Ergebnis.
+```
+
+> ℹ️ **Hinweis:** GitHub Copilot öffnest du in Visual Studio mit **Strg+Alt+I** oder über das Menü **Ansicht → GitHub Copilot Chat**.
+
+---
+
 ## Voraussetzungen
 
 - Windows 10 oder neuer
