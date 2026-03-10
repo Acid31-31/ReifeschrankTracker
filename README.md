@@ -8,6 +8,36 @@ Ein WPF-Desktop-Anwendung zum Verfolgen von Reifeprozessen (Räuchern, Lufttrock
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) mit der Workload **.NET-Desktopentwicklung**
 - .NET 8 SDK
 
+## 🔄 Änderungen von GitHub auf deinen PC übertragen
+
+Wenn du (oder GitHub Copilot) Änderungen auf GitHub gemacht hat und du sie lokal sehen willst, musst du diese Schritte ausführen:
+
+### Schritt 1 – Pull Request mergen (auf GitHub.com)
+
+1. Gehe zu **https://github.com/Acid31-31/ReifeschrankTracker**
+2. Klicke oben auf **„Pull requests"**
+3. Öffne den offenen Pull Request
+4. Klicke auf **„Merge pull request"** → **„Confirm merge"**
+
+### Schritt 2 – Änderungen in Visual Studio herunterladen
+
+**Option A – In Visual Studio (empfohlen):**
+1. Öffne dein Projekt in Visual Studio
+2. Klicke oben in der Menüleiste auf **Git** → **Pullen** (oder **Git → Pull**)
+3. Die Änderungen werden automatisch heruntergeladen
+
+**Option B – Per Git-Befehl im Terminal:**
+```cmd
+git checkout main
+git pull origin main
+```
+
+> 💡 **Tipp für Copilot-Nutzer:** Sage deiner KI in Visual Studio:
+> `„Merge den Pull Request und pullen die neuesten Änderungen von GitHub"` –
+> oder führe einfach **Git → Pull** in Visual Studio durch.
+
+---
+
 ## Erstellen und Starten (Visual Studio)
 
 1. Repository klonen oder ZIP entpacken.
