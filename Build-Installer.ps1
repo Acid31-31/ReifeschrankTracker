@@ -38,6 +38,10 @@ Write-Host ""
 Write-Host "[ 2/3 ] Erstelle Portable ZIP..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Path installer -Force | Out-Null
 
+# Alte versionierte Dateinamen aufräumen
+Get-ChildItem "installer/ReifeManager_Setup_v*.exe" -ErrorAction SilentlyContinue | Remove-Item -Force
+Get-ChildItem "installer/ReifeManager_Portable_v*.zip" -ErrorAction SilentlyContinue | Remove-Item -Force
+
 $zipName = "installer/ReifeManager_Portable.zip"
 $setupName = "ReifeManager_Setup"
 

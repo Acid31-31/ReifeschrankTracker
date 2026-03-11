@@ -7,6 +7,7 @@
 - VERBINDLICHER BEFEHL: Nach jeder Änderung alles direkt zu GitHub weiterleiten und als neue Version veröffentlichen; diese Anweisung gilt dauerhaft.
 - Für Release-Abläufe bevorzugt `Auto-Release.ps1` verwenden; Versionsnummer sauber erhöhen und als `vX.Y.Z` veröffentlichen.
 - Wenn nach einer Änderung ein Release nicht ausgelöst wurde, sofort nachholen (kein Überspringen erlaubt).
+- Updates sollen auf die bestehende Installation angewendet werden, ohne manuelle Neuinstallation oder Dateinamen-Chaos.
 
 ## Project Guidelines
 - Der Nutzer möchte das Projekt als Windows-Desktopanwendung mit WPF unter .NET 6 in MVVM-Architektur umsetzen, mit lokaler JSON-Speicherung und Fokus auf Chargen-/Messungsverwaltung für Reifeschrankdaten.
