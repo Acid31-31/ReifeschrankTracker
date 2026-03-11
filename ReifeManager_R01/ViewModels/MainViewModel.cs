@@ -1016,6 +1016,12 @@ public class MainViewModel : ObservableObject
         try
         {
             Debug.WriteLine($"🔍 [ViewModel] Prüfung gestartet (manuell={manuell})");
+            
+            if (manuell)
+            {
+                Statusmeldung = "⏳ Prüfe auf Updates...";
+            }
+
             var update = await _updateService.PruefeAufUpdateAsync();
             if (update is null)
             {
@@ -1036,6 +1042,11 @@ public class MainViewModel : ObservableObject
             UpdateVerfuegbar = true;
             UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
 
+            if (manuell)
+            {
+                Statusmeldung = $"✅ Update v{update.Version} verfügbar!";
+            }
+
             var result = MessageBox.Show(
                 $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
                 "Update verfügbar",
@@ -1052,11 +1063,16 @@ public class MainViewModel : ObservableObject
             Debug.WriteLine($"❌ [ViewModel] Update-Fehler: {ex.GetType().Name} - {ex.Message}");
             UpdateVerfuegbar = false;
             var grund = string.IsNullOrWhiteSpace(ex.Message) ? "Unbekannter Fehler" : ex.Message;
-            UpdateHinweis = $"⚠ Update-Prüfung fehlgeschlagen: {grund}";
+            UpdateHinweis = $"⚠ Update-Prüfung fehlgeschlagen";
 
             if (manuell)
             {
-                Statusmeldung = $"❌ Update-Prüfung fehlgeschlagen: {grund}";
+                Statusmeldung = $"❌ Update-Fehler: {grund}";
+                MessageBox.Show(
+                    $"Update-Prüfung fehlgeschlagen:\n\n{grund}\n\nBitte überprüfen Sie Ihre Internetverbindung oder besuchen Sie GitHub manuell.",
+                    "Update-Fehler",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
     }
