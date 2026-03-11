@@ -21,8 +21,11 @@ public class UpdateService
     {
         try
         {
+            Debug.WriteLine("🔍 [Update] Starte Update-Prüfung...");
+
             using var client = ErzeugeClient();
 
+            Debug.WriteLine($"🔍 [Update] Frage ab: {LatestReleaseApiUrl}");
             using var releaseResponse = await client.GetAsync(LatestReleaseApiUrl);
             if (releaseResponse.IsSuccessStatusCode)
             {
@@ -30,20 +33,26 @@ public class UpdateService
                 var releaseUpdate = ParseReleaseUpdate(releaseJson);
                 if (releaseUpdate is not null)
                 {
+                    Debug.WriteLine($"✅ [Update] Release gefunden: v{releaseUpdate.Version}");
                     return releaseUpdate;
                 }
+                Debug.WriteLine("⚠️ [Update] Release-JSON ungültig oder keine .exe vorhanden");
             }
-            else if (releaseResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+            else
             {
-                releaseResponse.EnsureSuccessStatusCode();
+                Debug.WriteLine($"⚠️ [Update] Release-API HTTP {(int)releaseResponse.StatusCode}");
+                if (releaseResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
+                {
+                    releaseResponse.EnsureSuccessStatusCode();
+                }
             }
 
+            Debug.WriteLine("🔄 [Update] Versuche Tag-Fallback...");
             return await PruefeTagInstallerFallbackAsync(client);
         }
         catch (Exception ex)
         {
-            // Fehler protokollieren aber nicht crashen
-            System.Diagnostics.Debug.WriteLine($"Update-Prüfung fehlgeschlagen: {ex.Message}");
+            Debug.WriteLine($"❌ [Update] Fehler bei Prüfung: {ex.GetType().Name} - {ex.Message}");
             return null;
         }
     }

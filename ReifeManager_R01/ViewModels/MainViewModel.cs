@@ -1015,9 +1015,11 @@ public class MainViewModel : ObservableObject
     {
         try
         {
+            Debug.WriteLine($"🔍 [ViewModel] Prüfung gestartet (manuell={manuell})");
             var update = await _updateService.PruefeAufUpdateAsync();
             if (update is null)
             {
+                Debug.WriteLine("ℹ️ [ViewModel] Kein Update verfügbar");
                 UpdateVerfuegbar = false;
                 UpdateHinweis = "✓ Anwendung ist aktuell";
 
@@ -1029,6 +1031,7 @@ public class MainViewModel : ObservableObject
                 return;
             }
 
+            Debug.WriteLine($"✅ [ViewModel] Update verfügbar: v{update.Version}");
             _verfuegbaresUpdate = update;
             UpdateVerfuegbar = true;
             UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
@@ -1046,6 +1049,7 @@ public class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            Debug.WriteLine($"❌ [ViewModel] Update-Fehler: {ex.GetType().Name} - {ex.Message}");
             UpdateVerfuegbar = false;
             var grund = string.IsNullOrWhiteSpace(ex.Message) ? "Unbekannter Fehler" : ex.Message;
             UpdateHinweis = $"⚠ Update-Prüfung fehlgeschlagen: {grund}";
@@ -1059,8 +1063,11 @@ public class MainViewModel : ObservableObject
 
     private async Task UpdateStartenAsync()
     {
+        Debug.WriteLine("📥 [ViewModel] UpdateStartenAsync aufgerufen");
+        
         if (_verfuegbaresUpdate is null)
         {
+            Debug.WriteLine("⚠️ [ViewModel] Kein Update gespeichert, öffne GitHub Releases");
             Process.Start(new ProcessStartInfo(UpdateService.ReleasePageUrl)
             {
                 UseShellExecute = true
@@ -1072,6 +1079,7 @@ public class MainViewModel : ObservableObject
 
         try
         {
+            Debug.WriteLine($"⏳ [ViewModel] Lade Update herunter: {_verfuegbaresUpdate.DownloadUrl}");
             Statusmeldung = "⏳ Update wird heruntergeladen...";
 
             var datenPfad = Path.Combine(
@@ -1085,9 +1093,13 @@ public class MainViewModel : ObservableObject
                 Directory.CreateDirectory(backupOrdner);
                 var backupPfad = Path.Combine(backupOrdner, $"chargen_backup_{DateTime.Now:yyyyMMdd_HHmmss}.json");
                 File.Copy(datenPfad, backupPfad, overwrite: true);
+                Debug.WriteLine($"✅ [ViewModel] Backup erstellt: {backupPfad}");
             }
 
             var installerPfad = await _updateService.LadeUpdateHerunterAsync(_verfuegbaresUpdate);
+            Debug.WriteLine($"✅ [ViewModel] Update heruntergeladen: {installerPfad}");
+            
+            Debug.WriteLine($"🚀 [ViewModel] Starte Installer: {installerPfad}");
             _updateService.StarteInstaller(installerPfad);
 
             Statusmeldung = "✓ Update gestartet (automatische Installation). Anwendung wird beendet...";
@@ -1095,6 +1107,7 @@ public class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
+            Debug.WriteLine($"❌ [ViewModel] Update fehlgeschlagen: {ex.GetType().Name} - {ex.Message}");
             Statusmeldung = $"❌ Update fehlgeschlagen: {ex.Message}";
         }
     }
