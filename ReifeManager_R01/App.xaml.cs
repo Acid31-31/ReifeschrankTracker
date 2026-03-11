@@ -57,7 +57,9 @@ public partial class App : Application
         var lightText = (Brush)new BrushConverter().ConvertFromString("#F3F3F3")!;
         var border = (Brush)new BrushConverter().ConvertFromString("#555555")!;
 
-        // Rekursiv ALLE Elemente dunkel einfärben
+        popupRoot.LayoutTransform = new ScaleTransform(1.7, 1.7);
+        popupRoot.RenderTransformOrigin = new Point(0, 0);
+
         ApplyDarkThemeRecursive(popupRoot, darkBackground, midBackground, lightText, border);
 
         var calendar = FindVisualChild<Calendar>(popupRoot);
@@ -69,25 +71,6 @@ public partial class App : Application
         calendar.Background = darkBackground;
         calendar.Foreground = lightText;
         calendar.BorderBrush = border;
-
-        var dayStyle = new Style(typeof(CalendarDayButton));
-        dayStyle.Setters.Add(new Setter(Control.BackgroundProperty, midBackground));
-        dayStyle.Setters.Add(new Setter(Control.ForegroundProperty, lightText));
-        dayStyle.Setters.Add(new Setter(Control.BorderBrushProperty, border));
-        dayStyle.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(1)));
-        calendar.Resources[typeof(CalendarDayButton)] = dayStyle;
-
-        var monthStyle = new Style(typeof(CalendarButton));
-        monthStyle.Setters.Add(new Setter(Control.BackgroundProperty, midBackground));
-        monthStyle.Setters.Add(new Setter(Control.ForegroundProperty, lightText));
-        monthStyle.Setters.Add(new Setter(Control.BorderBrushProperty, border));
-        monthStyle.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(1)));
-        calendar.Resources[typeof(CalendarButton)] = monthStyle;
-
-        var itemStyle = new Style(typeof(CalendarItem));
-        itemStyle.Setters.Add(new Setter(Control.BackgroundProperty, darkBackground));
-        itemStyle.Setters.Add(new Setter(Control.ForegroundProperty, lightText));
-        calendar.Resources[typeof(CalendarItem)] = itemStyle;
     }
 
     private static void ApplyDarkThemeRecursive(DependencyObject root, Brush darkBackground, Brush midBackground, Brush lightText, Brush border)

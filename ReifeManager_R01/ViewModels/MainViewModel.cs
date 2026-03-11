@@ -1022,18 +1022,41 @@ public class MainViewModel : ObservableObject
                 Statusmeldung = "⏳ Prüfe auf Updates...";
             }
 
+            var currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
             var update = await _updateService.PruefeAufUpdateAsync();
+            
+            // Zeige Update-Status-Fenster wenn manuell geprüft
+            if (manuell)
+            {
+                var statusWindow = new Views.UpdateCheckWindow(currentVersion, update)
+                {
+                    Owner = Application.Current.MainWindow
+                };
+                statusWindow.ShowDialog();
+                
+                if (update is not null)
+                {
+                    var result = MessageBox.Show(
+                        $"Neue Version v{update.Version} verfügbar!\n\nJetzt herunterladen und installieren?",
+                        "Update verfügbar",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        _verfuegbaresUpdate = update;
+                        await UpdateStartenAsync();
+                    }
+                }
+                return;
+            }
+
+            // Automatische Prüfung im Hintergrund
             if (update is null)
             {
                 Debug.WriteLine("ℹ️ [ViewModel] Kein Update verfügbar");
                 UpdateVerfuegbar = false;
                 UpdateHinweis = "✓ Anwendung ist aktuell";
-
-                if (manuell)
-                {
-                    Statusmeldung = "✓ Keine neue Version gefunden.";
-                }
-
                 return;
             }
 
@@ -1042,18 +1065,13 @@ public class MainViewModel : ObservableObject
             UpdateVerfuegbar = true;
             UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
 
-            if (manuell)
-            {
-                Statusmeldung = $"✅ Update v{update.Version} verfügbar!";
-            }
-
-            var result = MessageBox.Show(
+            var autoResult = MessageBox.Show(
                 $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
                 "Update verfügbar",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
 
-            if (result == MessageBoxResult.Yes)
+            if (autoResult == MessageBoxResult.Yes)
             {
                 await UpdateStartenAsync();
             }
@@ -1069,7 +1087,7 @@ public class MainViewModel : ObservableObject
             {
                 Statusmeldung = $"❌ Update-Fehler: {grund}";
                 MessageBox.Show(
-                    $"Update-Prüfung fehlgeschlagen:\n\n{grund}\n\nBitte überprüfen Sie Ihre Internetverbindung oder besuchen Sie GitHub manuell.",
+                    $"Update-Prüfung fehlgeschlagen:\n\n{grund}\n\nBitte überprüfen Sie Ihre Internetverbindung.",
                     "Update-Fehler",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);

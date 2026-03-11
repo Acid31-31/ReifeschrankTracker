@@ -191,12 +191,15 @@
                                         BorderThickness="1,0,0,0"
                                         Padding="0" />
                                 <Popup x:Name="PART_Popup" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
-                                    <Border Background="#2A2A2A" BorderBrush="#555555" BorderThickness="1" Padding="6">
+                                    <Border Background="#2A2A2A" BorderBrush="#555555" BorderThickness="1" Padding="8" Width="360" Height="320">
                                         <Calendar x:Name="PART_Calendar"
                                                   Background="#2A2A2A"
                                                   Foreground="#F3F3F3"
                                                   BorderBrush="#555555"
-                                                  BorderThickness="1" />
+                                                  BorderThickness="1"
+                                                  Width="340"
+                                                  Height="300"
+                                                  FontSize="18" />
                                     </Border>
                                 </Popup>
                             </Grid>
@@ -229,6 +232,8 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#555555" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Width" Value="280" />
+            <Setter Property="Height" Value="240" />
         </Style>
 
         <Style TargetType="CalendarItem">
@@ -242,6 +247,11 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="MinWidth" Value="34" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CalendarDayButton">
@@ -266,6 +276,8 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CalendarButton">

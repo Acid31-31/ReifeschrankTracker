@@ -3,10 +3,15 @@
 ## General Guidelines
 - Before making any code changes, create a backup first.
 - Always create a backup before code changes.
+- Bei jeder neuen Version muss automatisch ein GitHub-Release erzeugt werden (Commit/Push/Tag/Release), sodass installierte Clients ein Update erkennen. Diese Anforderung soll dauerhaft in den Projektanweisungen gespeichert sein.
+- VERBINDLICHER BEFEHL: Nach jeder Änderung alles direkt zu GitHub weiterleiten und als neue Version veröffentlichen; diese Anweisung gilt dauerhaft.
+- Für Release-Abläufe bevorzugt `Auto-Release.ps1` verwenden; Versionsnummer sauber erhöhen und als `vX.Y.Z` veröffentlichen.
+- Wenn nach einer Änderung ein Release nicht ausgelöst wurde, sofort nachholen (kein Überspringen erlaubt).
 
 ## Project Guidelines
 - Der Nutzer möchte das Projekt als Windows-Desktopanwendung mit WPF unter .NET 6 in MVVM-Architektur umsetzen, mit lokaler JSON-Speicherung und Fokus auf Chargen-/Messungsverwaltung für Reifeschrankdaten.
 - Das Projekt soll für ReifeManager_R01 als WPF-Desktop-App mit .NET 6, MVVM, lokaler JSON-Speicherung und dunklem Dashboard-Design umgesetzt werden.
+- UI-Wunsch: Beim Hover über Buttons soll der Farbunterschied deutlich stärker sein, etwa 10% dunkler, und hellblau soll im UI vermieden werden. 
 
 ## Features (implementiert)
 - ✅ MVVM-Architektur mit ObservableObject und RelayCommand
@@ -45,7 +50,6 @@ Start-Process .\ReifeManager_R01\bin\Debug\net6.0-windows\ReifeManager_R01.exe
 ```
 
 ## Projektstruktur
-
 ```
 ReifeManager_R01/
 ├── Infrastructure/

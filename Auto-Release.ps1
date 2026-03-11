@@ -54,7 +54,7 @@ try {
 Write-Host "`n📝 [4/6] Git Commit und Push..." -ForegroundColor Yellow
 try {
     git add -A
-    git commit -m "v$Version: Auto-Release - $Message" -q
+    git commit -m "v${Version}: Auto-Release - $Message" -q
     git push origin main -q
     Write-Host "✅ Code zu GitHub gepusht" -ForegroundColor Green
 } catch {
@@ -76,18 +76,19 @@ try {
 Write-Host "`n📤 [6/6] GitHub Release mit Assets..." -ForegroundColor Yellow
 
 if ([string]::IsNullOrEmpty($env:GH_TOKEN)) {
-    Write-Host "⚠️  GH_TOKEN nicht gesetzt - Release wird übersprungen" -ForegroundColor Yellow
-    Write-Host "`n   Einmalige Einrichtung (2 Min):" -ForegroundColor Cyan
-    Write-Host "   1. Token: https://github.com/settings/tokens/new?scopes=repo" -ForegroundColor Cyan
-    Write-Host "   2. Diese Befehl ausführen:" -ForegroundColor Cyan
-    Write-Host "      [Environment]::SetEnvironmentVariable('GH_TOKEN', 'ghp_xxx', 'User')" -ForegroundColor Green
-    Write-Host "   3. Terminal neu starten" -ForegroundColor Cyan
+    Write-Host "GH_TOKEN nicht gesetzt - Release wird uebersprungen" -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor Cyan
+    Write-Host "Einmalige Einrichtung in 2 Min" -ForegroundColor Cyan
+    Write-Host "1. Token: https://github.com/settings/tokens/new?scopes=repo" -ForegroundColor Cyan
+    Write-Host "2. Diesen Befehl ausfuehren:" -ForegroundColor Cyan
+    Write-Host "   [Environment]::SetEnvironmentVariable('GH_TOKEN', 'ghp_xxx', 'User')" -ForegroundColor Green
+    Write-Host "3. Terminal neu starten" -ForegroundColor Cyan
 } else {
     try {
         & ".\Quick-Release.ps1" -Version $Version
     } catch {
-        Write-Host "⚠️  Release-Upload fehlgeschlagen: $_" -ForegroundColor Yellow
-        Write-Host "   Manuell: https://github.com/Acid31-31/ReifeschrankTracker/releases/new?tag=v$Version" -ForegroundColor Cyan
+        Write-Host "Release-Upload fehlgeschlagen: $_" -ForegroundColor Yellow
+        Write-Host "Manuell: https://github.com/Acid31-31/ReifeschrankTracker/releases/new?tag=v$Version" -ForegroundColor Cyan
     }
 }
 
