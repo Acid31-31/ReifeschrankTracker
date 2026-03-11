@@ -4,15 +4,7 @@
 Write-Host "=== ReifeManager Installer Builder ===" -ForegroundColor Cyan
 Write-Host ""
 
-# Version aus csproj lesen
-[xml]$csproj = Get-Content "ReifeManager_R01/ReifeManager_R01.csproj"
-$version = $csproj.Project.PropertyGroup.Version
-if ([string]::IsNullOrWhiteSpace($version)) {
-    $version = "1.0.1"
-}
-
-# 1. Projekt publishen
-Write-Host "[ 1/3 ] Publishing Projekt... (v$version)" -ForegroundColor Yellow
+Write-Host "[ 1/3 ] Publishing Projekt..." -ForegroundColor Yellow
 dotnet publish ReifeManager_R01/ReifeManager_R01.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/ReifeManager
 
 if ($LASTEXITCODE -ne 0) {
@@ -25,19 +17,25 @@ Write-Host ""
 
 # 2. Portable ZIP erstellen
 Write-Host "[ 2/3 ] Erstelle Portable ZIP..." -ForegroundColor Yellow
-$zipName = "installer/ReifeManager_Portable_v$version.zip"
+$zipName = "installer/ReifeManager.zip"
 New-Item -ItemType Directory -Path installer -Force | Out-Null
+
+# Alte Dateien löschen
+Get-Item "installer/ReifeManager*.zip" -ErrorAction SilentlyContinue | Remove-Item -Force
+Get-Item "installer/ReifeManager*.exe" -ErrorAction SilentlyContinue | Remove-Item -Force
+Write-Host "  └─ Alte Dateien gelöscht" -ForegroundColor Gray
+
 Compress-Archive -Path publish/ReifeManager/* -DestinationPath $zipName -Force
 Write-Host "OK Portable ZIP erstellt: $zipName" -ForegroundColor Green
 Write-Host ""
 
-# 3. Inno Setup Installer erstellen (falls installiert)
+# 3. Inno Setup Installer erstellen
 Write-Host "[ 3/3 ] Erstelle Installer..." -ForegroundColor Yellow
 $innoPath = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-$setupName = "ReifeManager_Setup_v$version"
+$setupName = "ReifeManager"
 
 if (Test-Path $innoPath) {
-    & $innoPath "/DMyAppVersion=$version" "/DMyOutputBaseFilename=$setupName" ReifeManager_Setup.iss
+    & $innoPath "/DMyAppVersion=1.0.0" "/DMyOutputBaseFilename=$setupName" ReifeManager_Setup.iss
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host "OK Installer erstellt: installer/$setupName.exe" -ForegroundColor Green
@@ -55,8 +53,6 @@ Write-Host "=== Fertig! ===" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Dateien:" -ForegroundColor White
 Write-Host "  - Portable EXE:   publish/ReifeManager/ReifeManager_R01.exe" -ForegroundColor Gray
-Write-Host "  - Portable ZIP:   $zipName" -ForegroundColor Gray
-if (Test-Path "installer/$setupName.exe") {
-    Write-Host "  - Setup Installer: installer/$setupName.exe" -ForegroundColor Gray
-}
+Write-Host "  - Portable ZIP:   installer/ReifeManager.zip" -ForegroundColor Green
+Write-Host "  - Setup Installer: installer/ReifeManager.exe" -ForegroundColor Green
 Write-Host ""

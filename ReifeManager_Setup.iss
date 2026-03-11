@@ -3,7 +3,7 @@
 #endif
 
 #ifndef MyOutputBaseFilename
-  #define MyOutputBaseFilename "ReifeManager_Setup_v" + MyAppVersion
+  #define MyOutputBaseFilename "ReifeManager"
 #endif
 
 [Setup]
