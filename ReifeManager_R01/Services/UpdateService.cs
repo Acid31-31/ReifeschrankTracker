@@ -21,38 +21,44 @@ public class UpdateService
     {
         try
         {
-            Debug.WriteLine("🔍 [Update] Starte Update-Prüfung...");
+            Debug.WriteLine("🔍 [UpdateService] START Prüfung");
+            var current = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
+            Debug.WriteLine($"📌 [UpdateService] Lokale Version: {current}");
 
             using var client = ErzeugeClient();
 
-            Debug.WriteLine($"🔍 [Update] Frage ab: {LatestReleaseApiUrl}");
+            // 1. Versuche Release API
+            Debug.WriteLine($"🔍 [UpdateService] Frage ab: {LatestReleaseApiUrl}");
             using var releaseResponse = await client.GetAsync(LatestReleaseApiUrl);
+            
             if (releaseResponse.IsSuccessStatusCode)
             {
                 var releaseJson = await releaseResponse.Content.ReadAsStringAsync();
+                Debug.WriteLine($"📄 [UpdateService] Release-JSON Länge: {releaseJson.Length} Zeichen");
+                
                 var releaseUpdate = ParseReleaseUpdate(releaseJson);
                 if (releaseUpdate is not null)
                 {
-                    Debug.WriteLine($"✅ [Update] Release gefunden: v{releaseUpdate.Version}");
+                    Debug.WriteLine($"✅ [UpdateService] Release gefunden: v{releaseUpdate.Version}");
+                    Debug.WriteLine($"   URL: {releaseUpdate.DownloadUrl}");
                     return releaseUpdate;
                 }
-                Debug.WriteLine("⚠️ [Update] Release-JSON ungültig oder keine .exe vorhanden");
+                Debug.WriteLine("⚠️  [UpdateService] Release-JSON geparst aber keine .exe gefunden");
             }
             else
             {
-                Debug.WriteLine($"⚠️ [Update] Release-API HTTP {(int)releaseResponse.StatusCode}");
-                if (releaseResponse.StatusCode != System.Net.HttpStatusCode.NotFound)
-                {
-                    releaseResponse.EnsureSuccessStatusCode();
-                }
+                Debug.WriteLine($"⚠️  [UpdateService] Release-API HTTP {(int)releaseResponse.StatusCode}");
             }
 
-            Debug.WriteLine("🔄 [Update] Versuche Tag-Fallback...");
+            // 2. Fallback: Tag-Suche
+            Debug.WriteLine("🔄 [UpdateService] Versuche Tag-Fallback...");
             return await PruefeTagInstallerFallbackAsync(client);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"❌ [Update] Fehler bei Prüfung: {ex.GetType().Name} - {ex.Message}");
+            Debug.WriteLine($"❌ [UpdateService] FEHLER: {ex.GetType().Name}");
+            Debug.WriteLine($"   Message: {ex.Message}");
+            Debug.WriteLine($"   Stack: {ex.StackTrace}");
             return null;
         }
     }
