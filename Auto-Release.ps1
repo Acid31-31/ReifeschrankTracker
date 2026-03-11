@@ -43,7 +43,7 @@ try {
 # ========== 3. INSTALLER ==========
 Write-Host "`n📦 [3/6] Installer wird gepackt..." -ForegroundColor Yellow
 try {
-    & ".\Build-Installer.ps1" | Out-Null
+    & ".\Build-Installer.ps1" -Version $Version | Out-Null
     Write-Host "✅ Installer erstellt" -ForegroundColor Green
 } catch {
     Write-Host "❌ Installer-Build fehlgeschlagen: $_" -ForegroundColor Red
