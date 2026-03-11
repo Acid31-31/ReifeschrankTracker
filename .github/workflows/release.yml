@@ -43,8 +43,8 @@ jobs:
         shell: powershell
         run: |
           Get-ChildItem installer
-          Test-Path "installer/ReifeManager_Setup_v${{ steps.tag.outputs.VERSION }}.exe"
-          Test-Path "installer/ReifeManager_Portable_v${{ steps.tag.outputs.VERSION }}.zip"
+          Test-Path "installer/ReifeManager_Setup.exe"
+          Test-Path "installer/ReifeManager_Portable.zip"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -57,11 +57,11 @@ jobs:
             Automatisch erstellt bei Tag-Push
 
             ### Downloads
-            - Setup Installer: ReifeManager_Setup_v${{ steps.tag.outputs.VERSION }}.exe
-            - Portable ZIP: ReifeManager_Portable_v${{ steps.tag.outputs.VERSION }}.zip
+            - Setup Installer: ReifeManager_Setup.exe
+            - Portable ZIP: ReifeManager_Portable.zip
           files: |
-            installer/ReifeManager_Setup_v${{ steps.tag.outputs.VERSION }}.exe
-            installer/ReifeManager_Portable_v${{ steps.tag.outputs.VERSION }}.zip
+            installer/ReifeManager_Setup.exe
+            installer/ReifeManager_Portable.zip
           draft: false
           prerelease: false
         env:

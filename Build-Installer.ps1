@@ -38,8 +38,8 @@ Write-Host ""
 Write-Host "[ 2/3 ] Erstelle Portable ZIP..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Path installer -Force | Out-Null
 
-$zipName = "installer/ReifeManager_Portable_v$Version.zip"
-$setupName = "ReifeManager_Setup_v$Version"
+$zipName = "installer/ReifeManager_Portable.zip"
+$setupName = "ReifeManager_Setup"
 
 Compress-Archive -Path publish/ReifeManager/* -DestinationPath $zipName -Force
 Write-Host "OK Portable ZIP erstellt: $zipName" -ForegroundColor Green
@@ -68,6 +68,6 @@ Write-Host "=== Fertig! ===" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Dateien:" -ForegroundColor White
 Write-Host "  - Portable EXE:    publish/ReifeManager/ReifeManager_R01.exe" -ForegroundColor Gray
-Write-Host "  - Portable ZIP:    $zipName" -ForegroundColor Green
-Write-Host "  - Setup Installer: installer/$setupName.exe" -ForegroundColor Green
+Write-Host "  - Portable ZIP:    installer/ReifeManager_Portable.zip" -ForegroundColor Green
+Write-Host "  - Setup Installer: installer/ReifeManager_Setup.exe" -ForegroundColor Green
 Write-Host ""

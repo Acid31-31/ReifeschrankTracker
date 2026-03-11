@@ -72,7 +72,7 @@ public class UpdateService
 
         Directory.CreateDirectory(updateOrdner);
 
-        var dateiname = string.IsNullOrWhiteSpace(info.AssetName) ? "ReifeManager_Update.exe" : info.AssetName;
+        var dateiname = "ReifeManager_Setup.exe";
         var zielPfad = Path.Combine(updateOrdner, dateiname);
 
         using var client = ErzeugeClient();

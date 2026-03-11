@@ -29,8 +29,8 @@ $releaseBody = @"
 ## v$Version Release
 
 ### Downloads
-- **Setup Installer:** ReifeManager_Setup_v$Version.exe
-- **Portable ZIP:** ReifeManager_Portable_v$Version.zip
+- **Setup Installer:** ReifeManager_Setup.exe
+- **Portable ZIP:** ReifeManager_Portable.zip
 
 ### Features
 ✨ Auto-Deployment ready
@@ -84,8 +84,8 @@ try {
 
 # Assets hochladen
 $files = @(
-    @{ path = "installer/ReifeManager_Setup_v$Version.exe"; name = "ReifeManager_Setup_v$Version.exe" },
-    @{ path = "installer/ReifeManager_Portable_v$Version.zip"; name = "ReifeManager_Portable_v$Version.zip" }
+    @{ path = "installer/ReifeManager_Setup.exe"; name = "ReifeManager_Setup.exe" },
+    @{ path = "installer/ReifeManager_Portable.zip"; name = "ReifeManager_Portable.zip" }
 )
 
 foreach ($file in $files) {
