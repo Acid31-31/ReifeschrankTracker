@@ -1,0 +1,50 @@
+name: Auto-Release on Tag Push
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get tag name
+        id: tag
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Check installer files exist
+        run: |
+          ls -lh installer/ReifeManager_*.exe || echo "Setup nicht vorhanden"
+          ls -lh installer/ReifeManager_*.zip || echo "Portable ZIP nicht vorhanden"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          name: ${{ steps.tag.outputs.TAG }} - Auto-Release
+          body: |
+            ## Auto-Release ${{ steps.tag.outputs.TAG }}
+            
+            Automatisch erstellt bei Tag-Push
+            
+            ### Downloads
+            - **Setup Installer:** ReifeManager_Setup_v*.exe
+            - **Portable ZIP:** ReifeManager_Portable_v*.zip
+            
+            🚀 Ready for deployment
+          files: |
+            installer/ReifeManager_Setup_v*.exe
+            installer/ReifeManager_Portable_v*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
