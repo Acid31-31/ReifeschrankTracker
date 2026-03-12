@@ -59,48 +59,6 @@
             <DockPanel LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="📦 Chargen" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,14,0,0">
-                    <TextBlock Text="Neue Charge" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
-                    <TextBlock Text="Profil" FontSize="12" Opacity="0.85" />
-                    <DockPanel Margin="0,2,0,8">
-                        <ComboBox ItemsSource="{Binding ProfilOptionen}"
-                                  SelectedItem="{Binding AusgewaehltesProfil}"
-                                  Width="180"
-                                  Height="30"
-                                  Background="#333333"
-                                  Foreground="#F3F3F3"
-                                  BorderBrush="#555555" />
-                        <Button Content="Info"
-                                Command="{Binding ProfilInfoAnzeigenCommand}"
-                                Background="#3A3A3A"
-                                Height="30"
-                                Width="62"
-                                Margin="8,0,0,0" />
-                    </DockPanel>
-                    <TextBlock Text="{Binding ProfilEmpfehlung, StringFormat='Empfohlenes Fleisch: {0}'}" FontSize="12" Opacity="0.9" Foreground="#FFD54F" Margin="0,0,0,8" />
-                    <TextBlock Text="Bezeichnung" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeueBezeichnung, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,8" Height="30" ToolTip="z. B. Coppa März 2026" />
-                    <TextBlock Text="Fleischtyp" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeuerFleischtyp, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,8" Height="30" ToolTip="z. B. Coppa, Pancetta, Schinken" />
-                    <TextBlock Text="Startdatum" FontSize="12" Opacity="0.85" />
-                    <DatePicker SelectedDate="{Binding NeuesStartdatum}" SelectedDateFormat="Short" Margin="0,2,0,8" Height="30" />
-                    <TextBlock Text="Zielverlust %" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeuesZielverlustProzent, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,8" Height="30" ToolTip="z. B. 30" />
-
-                    <TextBlock Text="Pökeln (Tage)" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeuePoekelnTage, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,6" Height="30" />
-                    <TextBlock Text="Abbrennen (Tage)" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeueAbbrennenTage, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,6" Height="30" />
-                    <TextBlock Text="Räuchern (Tage)" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeueRaeuchernTage, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,6" Height="30" />
-                    <TextBlock Text="Reifen (Tage)" FontSize="12" Opacity="0.85" />
-                    <TextBox Text="{Binding NeueReifenTage, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,12" Height="30" />
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="✓ Anlegen" Command="{Binding ChargeHinzufuegenCommand}" Height="32" Padding="16,0" Background="#0A84FF" />
-                        <Button Content="✗ Löschen" Command="{Binding ChargeLoeschenCommand}" Height="32" Padding="16,0" Margin="8,0,0,0" Background="#DD3333" />
-                    </StackPanel>
-                </StackPanel>
-
                 <ListBox x:Name="ChargenListBox" ItemsSource="{Binding Chargen}" SelectedItem="{Binding SelectedCharge}" Background="#222" BorderThickness="0" MouseDoubleClick="ChargenListBox_MouseDoubleClick">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -128,6 +86,7 @@
                             <Button Content="🔄 Updates prüfen" Command="{Binding UpdatesPruefenCommand}" Height="30" Padding="12,0" Background="#4444AA" Margin="0,0,8,0" />
                             <Button Content="📥 CSV" Command="{Binding VerlaufExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,0" />
                             <Button Content="📄 Bericht" Command="{Binding BerichtExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,0" />
+                            <Button Content="➕ Neue Charge" Click="NeueChargeButton_Click" Height="30" Padding="12,0" Background="#2E7D32" Margin="0,0,8,0" />
                             <Button Content="🗑 Charge löschen" Command="{Binding ChargeLoeschenCommand}" Height="30" Padding="12,0" Background="#DD3333" />
                         </StackPanel>
                     </DockPanel>

@@ -251,7 +251,52 @@ public partial class MainWindow : Window
 
     private void MenuAufgabenChargeAnlegen_Click(object sender, RoutedEventArgs e)
     {
-        if (DataContext is MainViewModel vm && vm.ChargeHinzufuegenCommand.CanExecute(null))
+        OeffneNeueChargeDialog();
+    }
+
+    private void NeueChargeButton_Click(object sender, RoutedEventArgs e)
+    {
+        OeffneNeueChargeDialog();
+    }
+
+    private void OeffneNeueChargeDialog()
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var dialog = new Views.NeueChargeWindow(
+            vm.ProfilOptionen,
+            vm.AusgewaehltesProfil,
+            vm.NeueBezeichnung,
+            vm.NeuerFleischtyp,
+            vm.NeuesStartdatum,
+            vm.NeuesZielverlustProzent,
+            vm.NeuePoekelnTage,
+            vm.NeueAbbrennenTage,
+            vm.NeueRaeuchernTage,
+            vm.NeueReifenTage)
+        {
+            Owner = this
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        vm.AusgewaehltesProfil = dialog.AusgewaehltesProfil;
+        vm.NeueBezeichnung = dialog.Bezeichnung;
+        vm.NeuerFleischtyp = dialog.Fleischtyp;
+        vm.NeuesStartdatum = dialog.Startdatum;
+        vm.NeuesZielverlustProzent = dialog.ZielverlustProzent;
+        vm.NeuePoekelnTage = dialog.PoekelnTage;
+        vm.NeueAbbrennenTage = dialog.AbbrennenTage;
+        vm.NeueRaeuchernTage = dialog.RaeuchernTage;
+        vm.NeueReifenTage = dialog.ReifenTage;
+
+        if (vm.ChargeHinzufuegenCommand.CanExecute(null))
         {
             vm.ChargeHinzufuegenCommand.Execute(null);
         }

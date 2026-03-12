@@ -1,0 +1,52 @@
+<Window x:Class="ReifeManager_R01.Views.NeueChargeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Neue Charge" Height="620" Width="430"
+        Background="#1E1E1E" Foreground="#F3F3F3"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Neue Charge anlegen" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                <TextBlock Text="Profil" />
+                <ComboBox x:Name="ProfilComboBox" Margin="0,4,0,10" Height="30" SelectionChanged="ProfilComboBox_SelectionChanged" />
+
+                <TextBlock Text="Bezeichnung" />
+                <TextBox x:Name="BezeichnungTextBox" Margin="0,4,0,10" Height="30" />
+
+                <TextBlock Text="Fleischtyp" />
+                <TextBox x:Name="FleischtypTextBox" Margin="0,4,0,10" Height="30" />
+
+                <TextBlock Text="Startdatum" />
+                <DatePicker x:Name="StartdatumPicker" Margin="0,4,0,10" Height="30" SelectedDateFormat="Short" />
+
+                <TextBlock Text="Zielverlust %" />
+                <TextBox x:Name="ZielverlustTextBox" Margin="0,4,0,10" Height="30" />
+
+                <TextBlock Text="Pökeln (Tage)" />
+                <TextBox x:Name="PoekelnTextBox" Margin="0,4,0,8" Height="30" />
+
+                <TextBlock Text="Abbrennen (Tage)" />
+                <TextBox x:Name="AbbrennenTextBox" Margin="0,4,0,8" Height="30" />
+
+                <TextBlock Text="Räuchern (Tage)" />
+                <TextBox x:Name="RaeuchernTextBox" Margin="0,4,0,8" Height="30" />
+
+                <TextBlock Text="Reifen (Tage)" />
+                <TextBox x:Name="ReifenTextBox" Margin="0,4,0,8" Height="30" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Anlegen" Width="110" Height="34" Margin="0,0,8,0" Click="Anlegen_Click" />
+            <Button Content="Abbrechen" Width="110" Height="34" Click="Abbrechen_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
