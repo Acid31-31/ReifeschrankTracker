@@ -13,12 +13,27 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#2A2A2A" Foreground="#F3F3F3" Margin="0,0,0,8">
+            <MenuItem Header="Datei">
+                <MenuItem Header="Beenden" Click="MenuDateiBeenden_Click" />
+            </MenuItem>
+            <MenuItem Header="Bearbeiten">
+                <MenuItem x:Name="VersionMenuItem" Header="Aktuelle Software-Version" IsEnabled="False" />
+                <Separator />
+                <MenuItem Header="Auf Updates prüfen" Click="MenuBearbeitenUpdates_Click" />
+            </MenuItem>
+            <MenuItem Header="Ansicht">
+                <MenuItem Header="Vollbild umschalten" Click="MenuAnsichtVollbild_Click" />
+            </MenuItem>
+        </Menu>
+
         <!-- SIDEBAR: Chargen -->
-        <Border Grid.Column="0" Grid.Row="0" Background="#2A2A2A" CornerRadius="8" Padding="14">
+        <Border Grid.Column="0" Grid.Row="1" Background="#2A2A2A" CornerRadius="8" Padding="14">
             <DockPanel LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="📦 Chargen" FontSize="22" FontWeight="SemiBold" Margin="0,0,0,12" />
 
@@ -73,7 +88,7 @@
         </Border>
 
         <!-- DASHBOARD: Haupt-Inhaltsbereich -->
-        <Border Grid.Column="2" Grid.Row="0" Background="#2A2A2A" CornerRadius="8" Padding="16">
+        <Border Grid.Column="2" Grid.Row="1" Background="#2A2A2A" CornerRadius="8" Padding="16">
             <ScrollViewer x:Name="DashboardScrollViewer" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="DashboardScrollViewer_PreviewMouseWheel">
                 <StackPanel>
                     <DockPanel Margin="0,0,0,10">
@@ -337,7 +352,7 @@
         </Border>
 
         <!-- STATUS BAR -->
-        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#1A1A1A" CornerRadius="4" Padding="12,8">
+        <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Background="#1A1A1A" CornerRadius="4" Padding="12,8">
             <TextBlock Text="{Binding Statusmeldung}" Foreground="#6EB7FF" FontSize="12" VerticalAlignment="Center" />
         </Border>
     </Grid>

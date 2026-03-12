@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +18,29 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel();
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        VersionMenuItem.Header = $"Aktuelle Software-Version: {version}";
+    }
+
+    private void MenuDateiBeenden_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void MenuBearbeitenUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.UpdatesPruefenCommand.CanExecute(null))
+        {
+            vm.UpdatesPruefenCommand.Execute(null);
+        }
+    }
+
+    private void MenuAnsichtVollbild_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized
+            ? WindowState.Normal
+            : WindowState.Maximized;
     }
 
     private void DashboardScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
