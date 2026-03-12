@@ -39,6 +39,34 @@ jobs:
         shell: powershell
         run: .\Build-Installer.ps1 -Version ${{ steps.tag.outputs.VERSION }}
 
+      - name: Sign installer (optional)
+        shell: powershell
+        env:
+          CODE_SIGN_CERT_BASE64: ${{ secrets.CODE_SIGN_CERT_BASE64 }}
+          CODE_SIGN_CERT_PASSWORD: ${{ secrets.CODE_SIGN_CERT_PASSWORD }}
+          CODE_SIGN_TIMESTAMP_URL: ${{ secrets.CODE_SIGN_TIMESTAMP_URL }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CODE_SIGN_CERT_BASE64) -or [string]::IsNullOrWhiteSpace($env:CODE_SIGN_CERT_PASSWORD)) {
+            Write-Host "Kein Zertifikat hinterlegt - Signierung wird übersprungen."
+            exit 0
+          }
+
+          $pfxPath = Join-Path $env:RUNNER_TEMP "codesign.pfx"
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:CODE_SIGN_CERT_BASE64))
+
+          $signtool = (Get-Command signtool.exe -ErrorAction SilentlyContinue).Source
+          if ([string]::IsNullOrWhiteSpace($signtool)) {
+            $signtool = "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe"
+          }
+
+          if (-not (Test-Path $signtool)) {
+            throw "signtool.exe nicht gefunden."
+          }
+
+          $timestampUrl = if ([string]::IsNullOrWhiteSpace($env:CODE_SIGN_TIMESTAMP_URL)) { "http://timestamp.digicert.com" } else { $env:CODE_SIGN_TIMESTAMP_URL }
+          & $signtool sign /fd SHA256 /f $pfxPath /p $env:CODE_SIGN_CERT_PASSWORD /tr $timestampUrl /td SHA256 "installer/ReifeManager_Setup.exe"
+          if ($LASTEXITCODE -ne 0) { throw "Signierung fehlgeschlagen." }
+
       - name: Verify artifacts
         shell: powershell
         run: |
