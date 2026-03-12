@@ -17,14 +17,43 @@ public partial class UpdateCheckWindow : Window
             _downloadUrl = available.DownloadUrl ?? "https://github.com/Acid31-31/ReifeschrankTracker/releases";
         }
         
+        var currentDisplay = FormatVersionForDisplay(currentVersion);
+        var availableDisplay = available is null ? "Keine neue Version verfügbar" : FormatVersionForDisplay(available.Version);
+
         DataContext = new
         {
-            CurrentVersion = currentVersion,
-            AvailableVersion = available?.Version ?? "Keine neue Version verfügbar",
+            CurrentVersion = currentDisplay,
+            AvailableVersion = availableDisplay,
             StatusMessage = available is not null
-                ? $"✅ Neue Version v{available.Version} ist verfügbar!\n\nBitte klicken Sie auf 'GitHub öffnen' oder laden Sie manual herunter."
+                ? $"✅ Neue Version v{availableDisplay} ist verfügbar!\n\nBitte klicken Sie auf 'GitHub öffnen' oder laden Sie manual herunter."
                 : "✓ Sie verwenden bereits die neueste Version."
         };
+    }
+
+    private static string FormatVersionForDisplay(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return "unbekannt";
+        }
+
+        var clean = raw.Trim().TrimStart('v', 'V');
+        if (!Version.TryParse(clean, out var version))
+        {
+            return clean;
+        }
+
+        if (version.Revision >= 0)
+        {
+            return $"{version.Major}.{version.Minor}.{version.Revision}";
+        }
+
+        if (version.Build >= 0)
+        {
+            return $"{version.Major}.{version.Minor}.{version.Build}";
+        }
+
+        return $"{version.Major}.{version.Minor}";
     }
 
     private void OnGitHubClick(object sender, RoutedEventArgs e)

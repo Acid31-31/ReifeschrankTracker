@@ -1234,8 +1234,9 @@ public class MainViewModel : ObservableObject
                 Statusmeldung = "⏳ Prüfe auf Updates...";
             }
 
-            var currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+            var currentVersion = FormatVersionForDisplay(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0");
             var update = await _updateService.PruefeAufUpdateAsync();
+            var updateVersionText = update is null ? string.Empty : FormatVersionForDisplay(update.Version);
             
             // Zeige Update-Status-Fenster wenn manuell geprüft
             if (manuell)
@@ -1249,7 +1250,7 @@ public class MainViewModel : ObservableObject
                 if (update is not null)
                 {
                     var result = MessageBox.Show(
-                        $"Neue Version v{update.Version} verfügbar!\n\nJetzt herunterladen und installieren?",
+                        $"Neue Version v{updateVersionText} verfügbar!\n\nJetzt herunterladen und installieren?",
                         "Update verfügbar",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Information);
@@ -1272,13 +1273,13 @@ public class MainViewModel : ObservableObject
                 return;
             }
 
-            Debug.WriteLine($"✅ [ViewModel] Update verfügbar: v{update.Version}");
+            Debug.WriteLine($"✅ [ViewModel] Update verfügbar: v{updateVersionText}");
             _verfuegbaresUpdate = update;
             UpdateVerfuegbar = true;
-            UpdateHinweis = $"⬆ Neue Version verfügbar: {update.Version}";
+            UpdateHinweis = $"⬆ Neue Version verfügbar: {updateVersionText}";
 
             var autoResult = MessageBox.Show(
-                $"Es ist eine neue Version verfügbar ({update.Version}).\n\nJetzt herunterladen und installieren?",
+                $"Es ist eine neue Version verfügbar ({updateVersionText}).\n\nJetzt herunterladen und installieren?",
                 "Update verfügbar",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
@@ -1381,6 +1382,32 @@ public class MainViewModel : ObservableObject
     public void AktualisiereDiagrammPublic()
     {
         AktualisiereDiagramm();
+    }
+
+    private static string FormatVersionForDisplay(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return "unbekannt";
+        }
+
+        var clean = raw.Trim().TrimStart('v', 'V');
+        if (!Version.TryParse(clean, out var version))
+        {
+            return clean;
+        }
+
+        if (version.Revision >= 0)
+        {
+            return $"{version.Major}.{version.Minor}.{version.Revision}";
+        }
+
+        if (version.Build >= 0)
+        {
+            return $"{version.Major}.{version.Minor}.{version.Build}";
+        }
+
+        return $"{version.Major}.{version.Minor}";
     }
 
     private static bool TryParseInt(string input, out int value)
