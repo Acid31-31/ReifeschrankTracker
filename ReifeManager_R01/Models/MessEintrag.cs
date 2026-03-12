@@ -6,5 +6,7 @@ public class MessEintrag
     public double Gewicht { get; set; }
     public double Temperatur { get; set; }
     public double Luftfeuchte { get; set; }
+    public string SollProzess { get; set; } = string.Empty;
+    public string Prozess { get; set; } = string.Empty;
     public string Notiz { get; set; } = string.Empty;
 }

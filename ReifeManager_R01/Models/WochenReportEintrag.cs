@@ -5,6 +5,9 @@ public class WochenReportEintrag
     public string Woche { get; init; } = string.Empty;
     public string Zeitraum { get; init; } = string.Empty;
     public string Phase { get; init; } = string.Empty;
+    public string SollProzess { get; init; } = string.Empty;
+    public string IstProzess { get; init; } = string.Empty;
+    public string ProzessWarnung { get; init; } = string.Empty;
     public double GewichtsverlustProzent { get; init; }
     public double? TemperaturDurchschnitt { get; init; }
     public double? LuftfeuchteDurchschnitt { get; init; }

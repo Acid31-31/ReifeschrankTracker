@@ -139,7 +139,7 @@
                                                 </StackPanel>
                                                 <Button DockPanel.Dock="Right" Content="Ordner" Margin="6,0,0,0" Padding="10,2"
                                                         Style="{StaticResource AppButtonStyle}" Background="#3A3A3A"
-                                                        Command="{Binding DataContext.ExportOrdnerOefeningenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        Command="{Binding DataContext.ExportOrdnerOeffnenCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Pfad}" />
                                                 <Button DockPanel.Dock="Right" Content="Öffnen" Padding="10,2"
                                                         Style="{StaticResource AppButtonStyle}" Background="#3A3A3A"
@@ -209,27 +209,30 @@
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="165" />
+                                    <ColumnDefinition Width="130" />
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="120" />
-                                    <ColumnDefinition Width="260" />
+                                    <ColumnDefinition Width="220" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="Datum" FontSize="12" Opacity="0.85" />
-                                <TextBlock Grid.Column="1" Text="Gewicht (g)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
-                                <TextBlock Grid.Column="2" Text="Temperatur (°C)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
-                                <TextBlock Grid.Column="3" Text="Luftfeuchte (%)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
-                                <TextBlock Grid.Column="4" Text="Notiz" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="1" Text="Prozess" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="2" Text="Gewicht (g)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="3" Text="Temperatur (°C)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="4" Text="Luftfeuchte (%)" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
+                                <TextBlock Grid.Column="5" Text="Notiz" FontSize="12" Opacity="0.85" Margin="8,0,0,0" />
                             </Grid>
 
                             <WrapPanel>
                                 <DatePicker SelectedDate="{Binding NeuesMessdatum}" SelectedDateFormat="Short" Width="165" Height="30" Margin="0,0,8,8" />
+                                <ComboBox ItemsSource="{Binding ProzessOptionen}" SelectedItem="{Binding NeuerMessProzess}" Width="130" Height="30" Margin="0,0,8,8" />
                                 <TextBox Text="{Binding NeuesMessgewicht, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
                                 <TextBox Text="{Binding NeueTemperatur, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
                                 <TextBox Text="{Binding NeueLuftfeuchte, UpdateSourceTrigger=PropertyChanged}" Width="120" Height="30" Margin="0,0,8,8" />
-                                <TextBox Text="{Binding NeueNotiz, UpdateSourceTrigger=PropertyChanged}" Width="260" Height="30" Margin="0,0,8,8" />
+                                <TextBox Text="{Binding NeueNotiz, UpdateSourceTrigger=PropertyChanged}" Width="220" Height="30" Margin="0,0,8,8" />
                                 <Button Content="✓ Speichern" Command="{Binding MessungHinzufuegenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,8" />
                                 <Button Content="🛠 Ändern" Command="{Binding MessungBearbeitenCommand}" Height="30" Padding="12,0" Background="#4444AA" Margin="0,0,8,8" />
                                 <Button Content="✗ Löschen" Command="{Binding MessungLoeschenCommand}" Height="30" Padding="12,0" Background="#DD3333" />
@@ -310,13 +313,41 @@
                               Background="#222"
                               GridLinesVisibility="Horizontal">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="120" />
-                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="120" />
-                            <DataGridTextColumn Header="Temperatur (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="120" />
-                            <DataGridTextColumn Header="Luftfeuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="130" />
+                            <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="110" />
+                            <DataGridTextColumn Header="Soll-Prozess" Binding="{Binding SollProzess}" Width="110" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Ist-Prozess" Binding="{Binding Prozess}" Width="110" />
+                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="110" />
+                            <DataGridTextColumn Header="Temperatur (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="110" />
+                            <DataGridTextColumn Header="Luftfeuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="120" />
                             <DataGridTextColumn Header="Notiz" Binding="{Binding Notiz}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
+
+                    <Border Background="#333" CornerRadius="6" Padding="10" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="📅 Wochenreport Reifung" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#6EB7FF" />
+                            <DataGrid ItemsSource="{Binding WochenReport}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="170"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      HeadersVisibility="Column"
+                                      Background="#222"
+                                      GridLinesVisibility="Horizontal">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Woche" Binding="{Binding Woche}" Width="65" />
+                                    <DataGridTextColumn Header="Zeitraum" Binding="{Binding Zeitraum}" Width="120" />
+                                    <DataGridTextColumn Header="Soll" Binding="{Binding SollProzess}" Width="85" />
+                                    <DataGridTextColumn Header="Ist" Binding="{Binding IstProzess}" Width="85" />
+                                    <DataGridTextColumn Header="Warnung" Binding="{Binding ProzessWarnung}" Width="190" />
+                                    <DataGridTextColumn Header="Verlust %" Binding="{Binding GewichtsverlustProzent, StringFormat=F2}" Width="90" />
+                                    <DataGridTextColumn Header="Bewertung" Binding="{Binding Bewertung}" Width="90" />
+                                    <DataGridTextColumn Header="Empfehlung" Binding="{Binding Empfehlung}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Border>

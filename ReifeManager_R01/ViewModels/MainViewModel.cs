@@ -35,6 +35,8 @@ public class MainViewModel : ObservableObject
 
     public ObservableCollection<string> ProfilOptionen { get; }
 
+    public ObservableCollection<string> ProzessOptionen { get; } = new() { "Pökeln", "Abbrennen", "Räuchern", "Reifen" };
+
     private string _ausgewaehltesProfil = string.Empty;
     public string AusgewaehltesProfil
     {
@@ -172,6 +174,13 @@ public class MainViewModel : ObservableObject
             NeuesMessgewicht = _selectedMessung.Gewicht.ToString("F0", CultureInfo.CurrentCulture);
             NeueTemperatur = _selectedMessung.Temperatur.ToString("F1", CultureInfo.CurrentCulture);
             NeueLuftfeuchte = _selectedMessung.Luftfeuchte.ToString("F1", CultureInfo.CurrentCulture);
+            if (string.IsNullOrWhiteSpace(_selectedMessung.SollProzess))
+            {
+                _selectedMessung.SollProzess = ErmittleSollProzess(_selectedMessung.Datum);
+            }
+            NeuerMessProzess = string.IsNullOrWhiteSpace(_selectedMessung.Prozess)
+                ? _selectedMessung.SollProzess
+                : _selectedMessung.Prozess;
             NeueNotiz = _selectedMessung.Notiz;
         }
     }
@@ -243,7 +252,18 @@ public class MainViewModel : ObservableObject
     public DateTime NeuesMessdatum
     {
         get => _neuesMessdatum;
-        set => SetProperty(ref _neuesMessdatum, value);
+        set
+        {
+            if (!SetProperty(ref _neuesMessdatum, value))
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NeuerMessProzess))
+            {
+                NeuerMessProzess = ErmittleSollProzess(_neuesMessdatum);
+            }
+        }
     }
 
     private string _neuesMessgewicht = string.Empty;
@@ -251,6 +271,13 @@ public class MainViewModel : ObservableObject
     {
         get => _neuesMessgewicht;
         set => SetProperty(ref _neuesMessgewicht, value);
+    }
+
+    private string _neuerMessProzess = string.Empty;
+    public string NeuerMessProzess
+    {
+        get => _neuerMessProzess;
+        set => SetProperty(ref _neuerMessProzess, value);
     }
 
     private string _neueTemperatur = string.Empty;
@@ -357,6 +384,8 @@ public class MainViewModel : ObservableObject
         ExportOrdnerOeffnenCommand = new RelayCommand(p => OeffneExportOrdnerAusHistorie(p));
         UpdateStartenCommand = new RelayCommand(_ => _ = UpdateStartenAsync());
         UpdatesPruefenCommand = new RelayCommand(_ => _ = PruefeAufUpdateAsync(true));
+
+        NeuerMessProzess = ErmittleSollProzess(NeuesMessdatum);
 
         Statusmeldung = $"✓ Programm gestartet — {Chargen.Count} Chargen geladen";
         _ = PruefeAufUpdateAsync();
@@ -656,12 +685,17 @@ public class MainViewModel : ObservableObject
             return;
         }
 
+        var sollProzess = ErmittleSollProzess(NeuesMessdatum);
+        var istProzess = NormalisiereProzess(NeuerMessProzess, sollProzess);
+
         var messung = new MessEintrag
         {
             Datum = NeuesMessdatum,
             Gewicht = messgewicht,
             Temperatur = temperatur,
             Luftfeuchte = luftfeuchte,
+            SollProzess = sollProzess,
+            Prozess = istProzess,
             Notiz = NeueNotiz.Trim()
         };
 
@@ -674,9 +708,10 @@ public class MainViewModel : ObservableObject
         NeueTemperatur = string.Empty;
         NeueLuftfeuchte = string.Empty;
         NeueNotiz = string.Empty;
+        NeuerMessProzess = ErmittleSollProzess(DateTime.Today);
         SelectedMessung = messung;
 
-        Statusmeldung = $"✓ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g).";
+        Statusmeldung = $"✓ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g, {istProzess}).";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -704,6 +739,8 @@ public class MainViewModel : ObservableObject
         SelectedMessung.Gewicht = messgewicht;
         SelectedMessung.Temperatur = temperatur;
         SelectedMessung.Luftfeuchte = luftfeuchte;
+        SelectedMessung.SollProzess = ErmittleSollProzess(NeuesMessdatum);
+        SelectedMessung.Prozess = NormalisiereProzess(NeuerMessProzess, SelectedMessung.SollProzess);
         SelectedMessung.Notiz = NeueNotiz.Trim();
 
         var bezug = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
@@ -934,6 +971,9 @@ public class MainViewModel : ObservableObject
             return;
         }
 
+        SelectedMessung.SollProzess = ErmittleSollProzess(SelectedMessung.Datum);
+        SelectedMessung.Prozess = NormalisiereProzess(SelectedMessung.Prozess, SelectedMessung.SollProzess);
+
         var bezug = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
         AktualisiereStueck(SelectedCharge, SelectedStueck, bezug);
         AktualisiereChargeStatus(SelectedCharge);
@@ -943,6 +983,7 @@ public class MainViewModel : ObservableObject
         NeuesMessgewicht = SelectedMessung.Gewicht.ToString("F0", CultureInfo.CurrentCulture);
         NeueTemperatur = SelectedMessung.Temperatur.ToString("F1", CultureInfo.CurrentCulture);
         NeueLuftfeuchte = SelectedMessung.Luftfeuchte.ToString("F1", CultureInfo.CurrentCulture);
+        NeuerMessProzess = SelectedMessung.Prozess;
         NeueNotiz = SelectedMessung.Notiz;
 
         Statusmeldung = "✓ Messung per Doppelklick bearbeitet und gespeichert.";
@@ -1002,6 +1043,19 @@ public class MainViewModel : ObservableObject
             var luft = wochenMessungen.Count > 0 ? wochenMessungen.Average(m => m.Luftfeuchte) : (double?)null;
 
             var phase = ErmittlePhase(charge, (woche - 1) * 7);
+            var sollProzess = phase;
+            var istProzess = wochenMessungen
+                .Select(m => string.IsNullOrWhiteSpace(m.Prozess) ? m.SollProzess : m.Prozess)
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .GroupBy(p => p)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault() ?? sollProzess;
+
+            var warnung = string.Equals(sollProzess, istProzess, StringComparison.OrdinalIgnoreCase)
+                ? "OK"
+                : $"Soll: {sollProzess}, Ist: {istProzess}";
+
             var (bewertung, empfehlung) = BewerteWochenVerlauf(verlust, phase);
 
             WochenReport.Add(new WochenReportEintrag
@@ -1009,6 +1063,9 @@ public class MainViewModel : ObservableObject
                 Woche = $"W{woche}",
                 Zeitraum = $"{von:dd.MM} - {bis:dd.MM}",
                 Phase = phase,
+                SollProzess = sollProzess,
+                IstProzess = istProzess,
+                ProzessWarnung = warnung,
                 GewichtsverlustProzent = verlust,
                 TemperaturDurchschnitt = temp,
                 LuftfeuchteDurchschnitt = luft,
@@ -1143,7 +1200,7 @@ public class MainViewModel : ObservableObject
 
         var usableWidth = ChartWidth - ChartLeft - ChartRight;
 
-        for (int i = 0; i < messungen.Count; i++)
+        for ( int i = 0; i < messungen.Count; i++)
         {
             var x = ChartLeft + (messungen.Count == 1 ? 0 : i * (usableWidth / (messungen.Count - 1))) - 16;
             ChartXAxisLabels.Add(new ChartAxisLabel
@@ -1348,5 +1405,29 @@ public class MainViewModel : ObservableObject
         }
 
         return double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+    }
+
+    private string ErmittleSollProzess(DateTime datum)
+    {
+        if (SelectedCharge is null)
+        {
+            return "Reifen";
+        }
+
+        var tageSeitStart = Math.Max(0, (datum.Date - SelectedCharge.Startdatum.Date).Days);
+        return ErmittlePhase(SelectedCharge, tageSeitStart);
+    }
+
+    private string NormalisiereProzess(string? eingabe, string fallback)
+    {
+        var kandidat = (eingabe ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(kandidat))
+        {
+            return fallback;
+        }
+
+        return ProzessOptionen.Any(p => string.Equals(p, kandidat, StringComparison.OrdinalIgnoreCase))
+            ? ProzessOptionen.First(p => string.Equals(p, kandidat, StringComparison.OrdinalIgnoreCase))
+            : fallback;
     }
 }
