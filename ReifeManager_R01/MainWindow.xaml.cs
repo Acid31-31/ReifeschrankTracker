@@ -22,7 +22,10 @@ public partial class MainWindow : Window
         DataContext = new MainViewModel();
 
         var version = Assembly.GetExecutingAssembly().GetName().Version;
-        VersionMenuItem.Header = $"Aktuelle Software-Version: {version}";
+        var displayVersion = version is null
+            ? "unbekannt"
+            : $"{version.Major}.{version.Minor}.{version.Revision}";
+        VersionMenuItem.Header = $"Aktuelle Software-Version: {displayVersion}";
     }
 
     private void MenuDateiBeenden_Click(object sender, RoutedEventArgs e)

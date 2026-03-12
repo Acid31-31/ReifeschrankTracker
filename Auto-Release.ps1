@@ -22,8 +22,35 @@ try {
     exit 1
 }
 
-# ========== 2. BUILD ==========
-Write-Host "`n🔨 [2/6] Release-Build wird durchgeführt..." -ForegroundColor Yellow
+# ========== 2. VERSION SYNCHRONISIEREN ==========
+Write-Host "`n🧾 [2/7] Projektversion wird gesetzt..." -ForegroundColor Yellow
+try {
+    $projectPath = "ReifeManager_R01/ReifeManager_R01.csproj"
+    [xml]$proj = Get-Content $projectPath
+
+    $parts = $Version.Split('.')
+    if ($parts.Count -lt 3) {
+        throw "Version muss mindestens im Format X.Y.Z angegeben werden."
+    }
+
+    $major = [int]$parts[0]
+    $minor = [int]$parts[1]
+    $patch = [int]$parts[2]
+
+    $proj.Project.PropertyGroup.Version = "$major.$minor.$patch"
+    $proj.Project.PropertyGroup.AssemblyVersion = "$major.$minor.0.$patch"
+    $proj.Project.PropertyGroup.FileVersion = "$major.$minor.0.$patch"
+    $proj.Project.PropertyGroup.InformationalVersion = "$major.$minor.$patch"
+    $proj.Save((Resolve-Path $projectPath))
+
+    Write-Host ("✅ Versionen in csproj gesetzt: {0}.{1}.{2}" -f $major, $minor, $patch) -ForegroundColor Green
+} catch {
+    Write-Host "❌ Versions-Synchronisierung fehlgeschlagen: $_" -ForegroundColor Red
+    exit 1
+}
+
+# ========== 3. BUILD ==========
+Write-Host "`n🔨 [3/7] Release-Build wird durchgeführt..." -ForegroundColor Yellow
 try {
     Stop-Process -Name "ReifeManager_R01" -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 1
@@ -40,8 +67,8 @@ try {
     exit 1
 }
 
-# ========== 3. INSTALLER ==========
-Write-Host "`n📦 [3/6] Installer wird gepackt..." -ForegroundColor Yellow
+# ========== 4. INSTALLER ==========
+Write-Host "`n📦 [4/7] Installer wird gepackt..." -ForegroundColor Yellow
 try {
     & ".\Build-Installer.ps1" -Version $Version | Out-Null
     Write-Host "✅ Installer erstellt" -ForegroundColor Green
@@ -50,8 +77,8 @@ try {
     exit 1
 }
 
-# ========== 4. GIT COMMIT ==========
-Write-Host "`n📝 [4/6] Git Commit und Push..." -ForegroundColor Yellow
+# ========== 5. GIT COMMIT ==========
+Write-Host "`n📝 [5/7] Git Commit und Push..." -ForegroundColor Yellow
 try {
     git add -A
     git commit -m "v${Version}: Auto-Release - $Message" -q
@@ -61,8 +88,8 @@ try {
     Write-Host "⚠️  Git Commit fehlgeschlagen (ignoriert): $_" -ForegroundColor Yellow
 }
 
-# ========== 5. GIT TAG ==========
-Write-Host "`n🏷️  [5/6] Git Tag erstellen..." -ForegroundColor Yellow
+# ========== 6. GIT TAG ==========
+Write-Host "`n🏷️  [6/7] Git Tag erstellen..." -ForegroundColor Yellow
 try {
     $tagMessage = "ReifeManager v$Version - Auto-Release $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
     git tag -a "v$Version" -m "$tagMessage" -f
@@ -72,8 +99,8 @@ try {
     Write-Host "⚠️  Tag-Fehler (ignoriert): $_" -ForegroundColor Yellow
 }
 
-# ========== 6. GITHUB RELEASE (Token-basiert) ==========
-Write-Host "`n📤 [6/6] GitHub Release mit Assets..." -ForegroundColor Yellow
+# ========== 7. GITHUB RELEASE (Token-basiert) ==========
+Write-Host "`n📤 [7/7] GitHub Release mit Assets..." -ForegroundColor Yellow
 
 if ([string]::IsNullOrEmpty($env:GH_TOKEN)) {
     Write-Host "GH_TOKEN nicht gesetzt - Release wird uebersprungen" -ForegroundColor Yellow

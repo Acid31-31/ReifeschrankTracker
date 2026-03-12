@@ -260,8 +260,18 @@ public class UpdateService
     private static Version ParseVersion(string tag)
     {
         var clean = tag.Trim().TrimStart('v', 'V');
+        var parts = clean.Split('.', StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length == 3 &&
+            int.TryParse(parts[0], out var major) &&
+            int.TryParse(parts[1], out var minor) &&
+            int.TryParse(parts[2], out var patch))
+        {
+            return new Version(major, minor, 0, patch);
+        }
+
         return Version.TryParse(clean, out var version)
             ? version
-            : new Version(1, 0, 0);
+            : new Version(1, 0, 0, 0);
     }
 }
