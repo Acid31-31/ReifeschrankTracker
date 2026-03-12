@@ -37,10 +37,24 @@ try {
     $minor = [int]$parts[1]
     $patch = [int]$parts[2]
 
-    $proj.Project.PropertyGroup.Version = "$major.$minor.$patch"
-    $proj.Project.PropertyGroup.AssemblyVersion = "$major.$minor.0.$patch"
-    $proj.Project.PropertyGroup.FileVersion = "$major.$minor.0.$patch"
-    $proj.Project.PropertyGroup.InformationalVersion = "$major.$minor.$patch"
+    $setNodeValue = {
+        param([string]$nodeName, [string]$nodeValue)
+
+        $node = $proj.SelectSingleNode("/Project/PropertyGroup/$nodeName")
+        if ($null -eq $node) {
+            $pg = $proj.SelectSingleNode("/Project/PropertyGroup")
+            $node = $proj.CreateElement($nodeName)
+            [void]$pg.AppendChild($node)
+        }
+
+        $node.InnerText = $nodeValue
+    }
+
+    & $setNodeValue "Version" "$major.$minor.$patch"
+    & $setNodeValue "AssemblyVersion" "$major.$minor.0.$patch"
+    & $setNodeValue "FileVersion" "$major.$minor.0.$patch"
+    & $setNodeValue "InformationalVersion" "$major.$minor.$patch"
+
     $proj.Save((Resolve-Path $projectPath))
 
     Write-Host ("✅ Versionen in csproj gesetzt: {0}.{1}.{2}" -f $major, $minor, $patch) -ForegroundColor Green
