@@ -54,6 +54,13 @@ public class MainViewModel : ObservableObject
 
             ProfilEmpfehlung = _reifePlanService.HoleEmpfohlenesFleisch(_ausgewaehltesProfil);
             
+            var profilVorschau = new Charge();
+            _reifePlanService.AnwendenProfilName(profilVorschau, _ausgewaehltesProfil);
+            NeuePoekelnTage = profilVorschau.PoekelnTage.ToString(CultureInfo.CurrentCulture);
+            NeueAbbrennenTage = profilVorschau.AbbrennenTage.ToString(CultureInfo.CurrentCulture);
+            NeueRaeuchernTage = profilVorschau.RaeuchernTage.ToString(CultureInfo.CurrentCulture);
+            NeueReifenTage = profilVorschau.ReifenTage.ToString(CultureInfo.CurrentCulture);
+
             NeueBezeichnung = ErzeugeNaechsteBezeichnung(_ausgewaehltesProfil);
             NeuerFleischtyp = ProfilEmpfehlung;
             NeuesZielverlustProzent = _reifePlanService.HoleEmpfohlenenZielverlust(_ausgewaehltesProfil).ToString("F0", CultureInfo.CurrentCulture);
@@ -114,6 +121,7 @@ public class MainViewModel : ObservableObject
 
             SelectedStueck = _selectedCharge?.Stuecke.FirstOrDefault();
             OnPropertyChanged(nameof(AktiveStuecke));
+            AktualisiereWochenReport();
             AktualisiereDiagramm();
         }
     }
@@ -194,6 +202,34 @@ public class MainViewModel : ObservableObject
     {
         get => _neuesZielverlustProzent;
         set => SetProperty(ref _neuesZielverlustProzent, value);
+    }
+
+    private string _neuePoekelnTage = "10";
+    public string NeuePoekelnTage
+    {
+        get => _neuePoekelnTage;
+        set => SetProperty(ref _neuePoekelnTage, value);
+    }
+
+    private string _neueAbbrennenTage = "1";
+    public string NeueAbbrennenTage
+    {
+        get => _neueAbbrennenTage;
+        set => SetProperty(ref _neueAbbrennenTage, value);
+    }
+
+    private string _neueRaeuchernTage = "0";
+    public string NeueRaeuchernTage
+    {
+        get => _neueRaeuchernTage;
+        set => SetProperty(ref _neueRaeuchernTage, value);
+    }
+
+    private string _neueReifenTage = "30";
+    public string NeueReifenTage
+    {
+        get => _neueReifenTage;
+        set => SetProperty(ref _neueReifenTage, value);
     }
 
     private string _neuesStartgewicht = string.Empty;
@@ -278,6 +314,7 @@ public class MainViewModel : ObservableObject
     public ObservableCollection<ChartAxisLabel> ChartXAxisLabels { get; } = new();
     public ObservableCollection<ChartAxisLabel> ChartYAxisLabels { get; } = new();
     public ObservableCollection<ExportEintrag> ExportHistorie { get; } = new();
+    public ObservableCollection<WochenReportEintrag> WochenReport { get; } = new();
 
     public MainViewModel()
     {
@@ -441,10 +478,15 @@ public class MainViewModel : ObservableObject
     private void ChargeHinzufuegen()
     {
         if (!TryParseDouble(NeuesZielverlustProzent, out var zielverlustProzent) ||
+            !TryParseInt(NeuePoekelnTage, out var poekelnTage) ||
+            !TryParseInt(NeueAbbrennenTage, out var abbrennenTage) ||
+            !TryParseInt(NeueRaeuchernTage, out var raeuchernTage) ||
+            !TryParseInt(NeueReifenTage, out var reifenTage) ||
+            poekelnTage < 0 || abbrennenTage < 0 || raeuchernTage < 0 || reifenTage < 0 ||
             !ValidationHelper.IsValidName(NeueBezeichnung) ||
             !ValidationHelper.IsValidLossPercentage(zielverlustProzent))
         {
-            Statusmeldung = "❌ Ungültige Eingabe. Bitte prüfen Sie die Chargendaten.";
+            Statusmeldung = "❌ Ungültige Eingabe. Bitte Chargendaten und Zeiten prüfen.";
             return;
         }
 
@@ -458,10 +500,13 @@ public class MainViewModel : ObservableObject
             Fleischtyp = fleischtyp,
             Startdatum = NeuesStartdatum,
             ZielverlustProzent = zielverlustProzent,
+            HerstellungsProfil = AusgewaehltesProfil,
+            PoekelnTage = poekelnTage,
+            AbbrennenTage = abbrennenTage,
+            RaeuchernTage = raeuchernTage,
+            ReifenTage = reifenTage,
             StatusUebersicht = "Keine Stücke"
         };
-
-        _reifePlanService.AnwendenProfilName(charge, AusgewaehltesProfil);
 
         var rezepte = _rezeptService.HoleRezepteZuProfil(AusgewaehltesProfil);
         if (rezepte.Count > 0)
@@ -474,15 +519,11 @@ public class MainViewModel : ObservableObject
             if (rezeptFenster.ShowDialog() == true && rezeptFenster.AusgewaehlitesRezept is not null)
             {
                 charge.Rezept = rezeptFenster.AusgewaehlitesRezept;
-                charge.PoekelnTage = rezeptFenster.AusgewaehlitesRezept.PoekelnTage;
-                charge.AbbrennenTage = rezeptFenster.AusgewaehlitesRezept.AbbrennenTage;
-                charge.RaeuchernTage = rezeptFenster.AusgewaehlitesRezept.RaeuchernTage;
-                charge.ReifenTage = rezeptFenster.AusgewaehlitesRezept.ReifenTage;
                 Statusmeldung = $"✓ Rezept '{charge.Rezept.Name}' ausgewählt.";
             }
             else
             {
-                Statusmeldung = "ℹ️ Kein Rezept ausgewählt — Standardwerte verwendet.";
+                Statusmeldung = "ℹ️ Kein Rezept ausgewählt — manuelle Zeiten werden verwendet.";
             }
         }
 
@@ -494,8 +535,16 @@ public class MainViewModel : ObservableObject
         NeuesStartdatum = DateTime.Today;
         NeuesZielverlustProzent = _reifePlanService.HoleEmpfohlenenZielverlust(AusgewaehltesProfil).ToString("F0", CultureInfo.CurrentCulture);
 
+        var profilVorschau = new Charge();
+        _reifePlanService.AnwendenProfilName(profilVorschau, AusgewaehltesProfil);
+        NeuePoekelnTage = profilVorschau.PoekelnTage.ToString(CultureInfo.CurrentCulture);
+        NeueAbbrennenTage = profilVorschau.AbbrennenTage.ToString(CultureInfo.CurrentCulture);
+        NeueRaeuchernTage = profilVorschau.RaeuchernTage.ToString(CultureInfo.CurrentCulture);
+        NeueReifenTage = profilVorschau.ReifenTage.ToString(CultureInfo.CurrentCulture);
+
         Statusmeldung = $"✓ Charge '{charge.Bezeichnung}' angelegt ({AusgewaehltesProfil}).";
         Speichern();
+        AktualisiereWochenReport();
     }
 
     private void ChargeLoeschen()
@@ -901,8 +950,114 @@ public class MainViewModel : ObservableObject
         AktualisiereDiagramm();
     }
 
+    private void AktualisiereWochenReport()
+    {
+        WochenReport.Clear();
+
+        if (SelectedCharge is null)
+        {
+            return;
+        }
+
+        var charge = SelectedCharge;
+        var alleMessungen = charge.Stuecke.SelectMany(s => s.Messungen).OrderBy(m => m.Datum).ToList();
+
+        var planTage = Math.Max(1, charge.PoekelnTage + charge.AbbrennenTage + charge.RaeuchernTage + charge.ReifenTage);
+        var maxMessTag = alleMessungen.Count == 0 ? 0 : Math.Max(0, (alleMessungen.Max(m => m.Datum).Date - charge.Startdatum.Date).Days + 1);
+        var gesamtTage = Math.Max(planTage, maxMessTag);
+        var anzahlWochen = Math.Max(1, (int)Math.Ceiling(gesamtTage / 7.0));
+
+        for (var woche = 1; woche <= anzahlWochen; woche++)
+        {
+            var von = charge.Startdatum.Date.AddDays((woche - 1) * 7);
+            var bis = von.AddDays(6);
+
+            var wochenMessungen = alleMessungen
+                .Where(m => m.Datum.Date >= von && m.Datum.Date <= bis)
+                .ToList();
+
+            var verlustListe = new List<double>();
+            foreach (var stueck in charge.Stuecke)
+            {
+                var sortiert = stueck.Messungen.OrderBy(m => m.Datum).ToList();
+                if (sortiert.Count == 0)
+                {
+                    continue;
+                }
+
+                var startMessung = sortiert.LastOrDefault(m => m.Datum.Date <= von) ?? sortiert.FirstOrDefault(m => m.Datum.Date >= von && m.Datum.Date <= bis);
+                var endMessung = sortiert.LastOrDefault(m => m.Datum.Date <= bis);
+
+                if (startMessung is null || endMessung is null || startMessung.Gewicht <= 0 || endMessung.Datum < startMessung.Datum)
+                {
+                    continue;
+                }
+
+                var wochenVerlust = ((startMessung.Gewicht - endMessung.Gewicht) / startMessung.Gewicht) * 100.0;
+                verlustListe.Add(wochenVerlust);
+            }
+
+            var verlust = verlustListe.Count > 0 ? verlustListe.Average() : 0.0;
+            var temp = wochenMessungen.Count > 0 ? wochenMessungen.Average(m => m.Temperatur) : (double?)null;
+            var luft = wochenMessungen.Count > 0 ? wochenMessungen.Average(m => m.Luftfeuchte) : (double?)null;
+
+            var phase = ErmittlePhase(charge, (woche - 1) * 7);
+            var (bewertung, empfehlung) = BewerteWochenVerlauf(verlust, phase);
+
+            WochenReport.Add(new WochenReportEintrag
+            {
+                Woche = $"W{woche}",
+                Zeitraum = $"{von:dd.MM} - {bis:dd.MM}",
+                Phase = phase,
+                GewichtsverlustProzent = verlust,
+                TemperaturDurchschnitt = temp,
+                LuftfeuchteDurchschnitt = luft,
+                Bewertung = bewertung,
+                Empfehlung = empfehlung
+            });
+        }
+    }
+
+    private static string ErmittlePhase(Charge charge, int tageSeitStart)
+    {
+        if (tageSeitStart < charge.PoekelnTage)
+        {
+            return "Pökeln";
+        }
+
+        tageSeitStart -= charge.PoekelnTage;
+        if (tageSeitStart < charge.AbbrennenTage)
+        {
+            return "Abbrennen";
+        }
+
+        tageSeitStart -= charge.AbbrennenTage;
+        if (tageSeitStart < charge.RaeuchernTage)
+        {
+            return "Räuchern";
+        }
+
+        return "Reifen";
+    }
+
+    private static (string Bewertung, string Empfehlung) BewerteWochenVerlauf(double verlustProzent, string phase)
+    {
+        if (verlustProzent >= 4.0)
+        {
+            return ("Zu schnell", "Luftfeuchte erhöhen (+3-5%) / Temperatur leicht senken");
+        }
+
+        if (phase == "Reifen" && verlustProzent <= 0.5)
+        {
+            return ("Zu langsam", "Luftfeuchte leicht senken oder Luftzirkulation erhöhen");
+        }
+
+        return ("Gut", "Verlauf im Zielbereich");
+    }
+
     private void AktualisiereDiagramm()
     {
+        AktualisiereWochenReport();
         ChartXAxisLabels.Clear();
         ChartYAxisLabels.Clear();
 
@@ -1169,6 +1324,18 @@ public class MainViewModel : ObservableObject
     public void AktualisiereDiagrammPublic()
     {
         AktualisiereDiagramm();
+    }
+
+    private static bool TryParseInt(string input, out int value)
+    {
+        input = input.Trim();
+
+        if (int.TryParse(input, NumberStyles.Integer, CultureInfo.CurrentCulture, out value))
+        {
+            return true;
+        }
+
+        return int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
     }
 
     private static bool TryParseDouble(string input, out double value)
