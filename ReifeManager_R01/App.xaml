@@ -316,5 +316,62 @@
             <Setter Property="Foreground" Value="#F3F3F3" />
             <Setter Property="BorderBrush" Value="#444444" />
         </Style>
+
+        <Style TargetType="Menu">
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="BorderBrush" Value="#555555" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="4,2" />
+        </Style>
+
+        <Style TargetType="MenuItem">
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="Foreground" Value="#F3F3F3" />
+            <Setter Property="BorderBrush" Value="#555555" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="ItemBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <ContentPresenter x:Name="Icon" ContentSource="Icon" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <ContentPresenter ContentSource="Header" VerticalAlignment="Center" Margin="18,0,20,0" />
+                                <TextBlock x:Name="Arrow" Text="▶" Foreground="#F3F3F3" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed" />
+                                <Popup x:Name="PART_Popup"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Placement="Right"
+                                       PopupAnimation="Fade">
+                                    <Border Background="#2A2A2A" BorderBrush="#555555" BorderThickness="1" Padding="2">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Role" Value="TopLevelHeader">
+                                <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom" />
+                                <Setter TargetName="Arrow" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="Role" Value="SubmenuHeader">
+                                <Setter TargetName="Arrow" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#3A3A3A" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#8C8C8C" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
