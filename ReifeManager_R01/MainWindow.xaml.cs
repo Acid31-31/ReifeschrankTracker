@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -150,25 +152,7 @@ public partial class MainWindow : Window
 
     private void Rezept_Doppelklick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        var viewModel = (MainViewModel)DataContext;
-        if (viewModel.SelectedCharge?.Rezept is not null)
-        {
-            var gewicht = 1000.0;
-            if (viewModel.SelectedCharge.Stuecke.Count > 0)
-            {
-                gewicht = viewModel.SelectedCharge.Stuecke.Sum(s => s.Startgewicht);
-            }
-
-            var detailFenster = new Views.RezeptDetailWindow(viewModel.SelectedCharge.Rezept, gewicht)
-            {
-                Owner = this
-            };
-            detailFenster.ShowDialog();
-        }
-        else
-        {
-            MessageBox.Show("Für diese Charge wurde kein Rezept ausgewählt.", "Kein Rezept", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+        OpenRezeptDetailsFromSelection();
     }
 
     private void ChargenListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -223,6 +207,220 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Fehler beim Bearbeiten: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void MenuAufgabenFaelligeMessungen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var heute = DateTime.Today;
+        var faellige = vm.Chargen
+            .SelectMany(c => c.Stuecke.Select(s => new
+            {
+                Charge = c.Bezeichnung,
+                LetzteMessung = s.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum.Date
+            }))
+            .Where(x => x.LetzteMessung is null || x.LetzteMessung < heute)
+            .ToList();
+
+        if (faellige.Count == 0)
+        {
+            MessageBox.Show("Heute sind keine Messungen fällig.", "Aufgaben", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var details = string.Join(Environment.NewLine, faellige.Take(12).Select(x => $"• {x.Charge}"));
+        var suffix = faellige.Count > 12 ? $"{Environment.NewLine}... und {faellige.Count - 12} weitere" : string.Empty;
+        MessageBox.Show($"Fällige Messungen heute: {faellige.Count}{Environment.NewLine}{Environment.NewLine}{details}{suffix}", "Aufgaben", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void MenuAufgabenMessungEintragen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.MessungHinzufuegenCommand.CanExecute(null))
+        {
+            vm.MessungHinzufuegenCommand.Execute(null);
+        }
+    }
+
+    private void MenuAufgabenChargeAnlegen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.ChargeHinzufuegenCommand.CanExecute(null))
+        {
+            vm.ChargeHinzufuegenCommand.Execute(null);
+        }
+    }
+
+    private void MenuAufgabenStueckBearbeiten_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.StueckBearbeitenCommand.CanExecute(null))
+        {
+            vm.StueckBearbeitenCommand.Execute(null);
+        }
+    }
+
+    private void MenuAufgabenRezeptOeffnen_Click(object sender, RoutedEventArgs e)
+    {
+        OpenRezeptDetailsFromSelection();
+    }
+
+    private void MenuReifungStatusCheck_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var alle = vm.Chargen.ToList();
+        var kritisch = alle.Count(c => c.StatusUebersicht.Contains("krit", StringComparison.OrdinalIgnoreCase));
+        var warnung = alle.Count(c => c.StatusUebersicht.Contains("warn", StringComparison.OrdinalIgnoreCase));
+        var ok = alle.Count - kritisch - warnung;
+
+        MessageBox.Show($"Status-Check abgeschlossen:{Environment.NewLine}Gesamt: {alle.Count}{Environment.NewLine}Kritisch: {kritisch}{Environment.NewLine}Warnung: {warnung}{Environment.NewLine}Unauffällig: {ok}",
+            "Reifung", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void MenuReifungWarnungen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var warnungen = vm.Chargen
+            .Where(c => c.StatusUebersicht.Contains("warn", StringComparison.OrdinalIgnoreCase) ||
+                        c.StatusUebersicht.Contains("krit", StringComparison.OrdinalIgnoreCase))
+            .Select(c => $"• {c.Bezeichnung}: {c.StatusUebersicht}")
+            .ToList();
+
+        if (warnungen.Count == 0)
+        {
+            MessageBox.Show("Keine Warnungen oder kritischen Chargen vorhanden.", "Reifung", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        MessageBox.Show(string.Join(Environment.NewLine, warnungen), "Warnungen/Kritische Chargen", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
+    private void MenuReifungZielverlustNeuBerechnen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        foreach (var charge in vm.Chargen)
+        {
+            foreach (var stueck in charge.Stuecke)
+            {
+                var bezug = stueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
+                vm.AktualisiereStueckPublic(charge, stueck, bezug);
+            }
+
+            vm.AktualisiereChargeStatusPublic(charge);
+        }
+
+        vm.AktualisiereStueckUiPublic();
+        vm.AktualisiereDiagrammPublic();
+        vm.SpeichernPublic();
+        vm.Statusmeldung = "✓ Zielverlust und Status wurden neu berechnet.";
+    }
+
+    private void MenuExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.VerlaufExportierenCommand.CanExecute(null))
+        {
+            vm.VerlaufExportierenCommand.Execute(null);
+        }
+    }
+
+    private void MenuExportPdf_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.BerichtExportierenCommand.CanExecute(null))
+        {
+            vm.BerichtExportierenCommand.Execute(null);
+        }
+    }
+
+    private void MenuExportHistorieOeffnen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var pfad = vm.ExportHistorie.FirstOrDefault()?.Pfad;
+        if (string.IsNullOrWhiteSpace(pfad))
+        {
+            MessageBox.Show("Es ist noch kein Export vorhanden.", "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var ordner = Path.GetDirectoryName(pfad);
+        if (string.IsNullOrWhiteSpace(ordner) || !Directory.Exists(ordner))
+        {
+            MessageBox.Show("Export-Ordner wurde nicht gefunden.", "Export", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{pfad}\"") { UseShellExecute = true });
+    }
+
+    private void MenuSystemBackupJetztErstellen_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReifeManager");
+            var datenDatei = Path.Combine(appData, "chargen.json");
+            var backupOrdner = Path.Combine(appData, "Backups");
+            Directory.CreateDirectory(backupOrdner);
+
+            if (!File.Exists(datenDatei))
+            {
+                MessageBox.Show("Keine Daten-Datei gefunden (chargen.json).", "Backup", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var ziel = Path.Combine(backupOrdner, $"chargen_manual_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+            File.Copy(datenDatei, ziel, true);
+            MessageBox.Show($"Backup erstellt:{Environment.NewLine}{ziel}", "Backup", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Backup fehlgeschlagen:{Environment.NewLine}{ex.Message}", "Backup", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void MenuSystemLogsAnzeigen_Click(object sender, RoutedEventArgs e)
+    {
+        var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ReifeManager");
+        Directory.CreateDirectory(appData);
+        Process.Start(new ProcessStartInfo("explorer.exe", appData) { UseShellExecute = true });
+    }
+
+    private void OpenRezeptDetailsFromSelection()
+    {
+        var viewModel = (MainViewModel)DataContext;
+        if (viewModel.SelectedCharge?.Rezept is not null)
+        {
+            var gewicht = 1000.0;
+            if (viewModel.SelectedCharge.Stuecke.Count > 0)
+            {
+                gewicht = viewModel.SelectedCharge.Stuecke.Sum(s => s.Startgewicht);
+            }
+
+            var detailFenster = new Views.RezeptDetailWindow(viewModel.SelectedCharge.Rezept, gewicht)
+            {
+                Owner = this
+            };
+            detailFenster.ShowDialog();
+        }
+        else
+        {
+            MessageBox.Show("Für diese Charge wurde kein Rezept ausgewählt.", "Kein Rezept", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

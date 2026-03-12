@@ -22,12 +22,34 @@
             <MenuItem Header="Datei">
                 <MenuItem Header="Beenden" Click="MenuDateiBeenden_Click" />
             </MenuItem>
-            <MenuItem Header="Bearbeiten">
-                <MenuItem x:Name="VersionMenuItem" Header="Aktuelle Software-Version" IsEnabled="False" />
+
+            <MenuItem Header="Aufgaben">
+                <MenuItem Header="Heute fällige Messungen anzeigen" Click="MenuAufgabenFaelligeMessungen_Click" />
+                <MenuItem Header="Messung eintragen" Click="MenuAufgabenMessungEintragen_Click" />
+                <MenuItem Header="Charge anlegen" Click="MenuAufgabenChargeAnlegen_Click" />
+                <MenuItem Header="Stück bearbeiten" Click="MenuAufgabenStueckBearbeiten_Click" />
+                <MenuItem Header="Rezept öffnen" Click="MenuAufgabenRezeptOeffnen_Click" />
+            </MenuItem>
+
+            <MenuItem Header="Reifung">
+                <MenuItem Header="Status-Check aller Chargen" Click="MenuReifungStatusCheck_Click" />
+                <MenuItem Header="Warnungen/Kritische Chargen" Click="MenuReifungWarnungen_Click" />
+                <MenuItem Header="Zielverlust neu berechnen" Click="MenuReifungZielverlustNeuBerechnen_Click" />
+            </MenuItem>
+
+            <MenuItem Header="Export">
+                <MenuItem Header="CSV Export" Click="MenuExportCsv_Click" />
+                <MenuItem Header="PDF Bericht" Click="MenuExportPdf_Click" />
+                <MenuItem Header="Export-Historie öffnen" Click="MenuExportHistorieOeffnen_Click" />
+            </MenuItem>
+
+            <MenuItem Header="System">
+                <MenuItem x:Name="VersionMenuItem" Header="Version" IsEnabled="False" />
                 <Separator />
                 <MenuItem Header="Auf Updates prüfen" Click="MenuBearbeitenUpdates_Click" />
-            </MenuItem>
-            <MenuItem Header="Ansicht">
+                <MenuItem Header="Backup jetzt erstellen" Click="MenuSystemBackupJetztErstellen_Click" />
+                <MenuItem Header="Logs anzeigen" Click="MenuSystemLogsAnzeigen_Click" />
+                <Separator />
                 <MenuItem Header="Vollbild umschalten" Click="MenuAnsichtVollbild_Click" />
             </MenuItem>
         </Menu>
