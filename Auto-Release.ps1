@@ -37,25 +37,12 @@ try {
     $minor = [int]$parts[1]
     $patch = [int]$parts[2]
 
-    $setNodeValue = {
-        param([string]$nodeName, [string]$nodeValue)
-
-        $node = $proj.SelectSingleNode("/Project/PropertyGroup/$nodeName")
-        if ($null -eq $node) {
-            $pg = $proj.SelectSingleNode("/Project/PropertyGroup")
-            $node = $proj.CreateElement($nodeName)
-            [void]$pg.AppendChild($node)
-        }
-
-        $node.InnerText = $nodeValue
-    }
-
-    & $setNodeValue "Version" "$major.$minor.$patch"
-    & $setNodeValue "AssemblyVersion" "$major.$minor.0.$patch"
-    & $setNodeValue "FileVersion" "$major.$minor.0.$patch"
-    & $setNodeValue "InformationalVersion" "$major.$minor.$patch"
-
-    $proj.Save((Resolve-Path $projectPath))
+    $projectContent = Get-Content $projectPath -Raw
+    $projectContent = [regex]::Replace($projectContent, '<Version>.*?</Version>', "<Version>$major.$minor.$patch</Version>")
+    $projectContent = [regex]::Replace($projectContent, '<AssemblyVersion>.*?</AssemblyVersion>', "<AssemblyVersion>$major.$minor.0.$patch</AssemblyVersion>")
+    $projectContent = [regex]::Replace($projectContent, '<FileVersion>.*?</FileVersion>', "<FileVersion>$major.$minor.0.$patch</FileVersion>")
+    $projectContent = [regex]::Replace($projectContent, '<InformationalVersion>.*?</InformationalVersion>', "<InformationalVersion>$major.$minor.$patch</InformationalVersion>")
+    Set-Content -Path $projectPath -Value $projectContent -Encoding UTF8
 
     Write-Host ("✅ Versionen in csproj gesetzt: {0}.{1}.{2}" -f $major, $minor, $patch) -ForegroundColor Green
 } catch {
