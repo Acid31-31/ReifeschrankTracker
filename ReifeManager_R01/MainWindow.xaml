@@ -127,7 +127,8 @@
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                             <Button Content="🔄 Updates prüfen" Command="{Binding UpdatesPruefenCommand}" Height="30" Padding="12,0" Background="#4444AA" Margin="0,0,8,0" />
                             <Button Content="📥 CSV" Command="{Binding VerlaufExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,0" />
-                            <Button Content="📄 Bericht" Command="{Binding BerichtExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" />
+                            <Button Content="📄 Bericht" Command="{Binding BerichtExportierenCommand}" Height="30" Padding="12,0" Background="#0A84FF" Margin="0,0,8,0" />
+                            <Button Content="🗑 Charge löschen" Command="{Binding ChargeLoeschenCommand}" Height="30" Padding="12,0" Background="#DD3333" />
                         </StackPanel>
                     </DockPanel>
 
