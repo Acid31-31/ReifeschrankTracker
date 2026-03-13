@@ -12,7 +12,8 @@
 ## Project Guidelines
 - Der Nutzer möchte das Projekt als Windows-Desktopanwendung mit WPF unter .NET 6 in MVVM-Architektur umsetzen, mit lokaler JSON-Speicherung und Fokus auf Chargen-/Messungsverwaltung für Reifeschrankdaten.
 - Das Projekt soll für ReifeManager_R01 als WPF-Desktop-App mit .NET 6, MVVM, lokaler JSON-Speicherung und dunklem Dashboard-Design umgesetzt werden.
-- UI-Wunsch: Beim Hover über Buttons soll der Farbunterschied deutlich stärker sein, etwa 10% dunkler, und hellblau soll im UI vermieden werden. 
+- UI-Wunsch: Beim Hover über Buttons soll der Farbunterschied deutlich stärker sein, etwa 10% dunkler, und hellblau soll im UI vermieden werden.
+- Im Bereich Messverlauf/Wochenreport soll die Schriftgröße deutlich größer (etwa doppelt so groß) für bessere Lesbarkeit sein.
 
 ## Features (implementiert)
 - ✅ MVVM-Architektur mit ObservableObject und RelayCommand

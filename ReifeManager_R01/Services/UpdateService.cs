@@ -29,7 +29,7 @@ public class UpdateService
 
             // 1. Versuche Release API
             Debug.WriteLine($"🔍 [UpdateService] Frage ab: {LatestReleaseApiUrl}");
-            using var releaseResponse = await client.GetAsync(LatestReleaseApiUrl);
+            using var releaseResponse = await SendWithRetryAsync(client, () => client.GetAsync(LatestReleaseApiUrl));
             
             if (releaseResponse.IsSuccessStatusCode)
             {
@@ -76,7 +76,7 @@ public class UpdateService
         var zielPfad = Path.Combine(updateOrdner, dateiname);
 
         using var client = ErzeugeClient();
-        var bytes = await client.GetByteArrayAsync(info.DownloadUrl);
+        var bytes = await SendWithRetryAsync(client, () => client.GetByteArrayAsync(info.DownloadUrl));
         await File.WriteAllBytesAsync(zielPfad, bytes);
 
         return zielPfad;
@@ -95,7 +95,7 @@ public class UpdateService
     {
         try
         {
-            using var tagsResponse = await client.GetAsync(TagsApiUrl);
+            using var tagsResponse = await SendWithRetryAsync(client, () => client.GetAsync(TagsApiUrl));
             tagsResponse.EnsureSuccessStatusCode();
 
             var tagsJson = await tagsResponse.Content.ReadAsStringAsync();
@@ -151,7 +151,7 @@ public class UpdateService
             {
                 try
                 {
-                    using var head = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                    using var head = await SendWithRetryAsync(client, () => client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url)));
                     if (head.IsSuccessStatusCode)
                     {
                         return new UpdateInfo
@@ -245,8 +245,8 @@ public class UpdateService
         // GitHub API braucht einen aussagekräftigen User-Agent
         client.DefaultRequestHeaders.UserAgent.ParseAdd("ReifeManager/1.0 (+https://github.com/Acid31-31/ReifeschrankTracker)");
         
-        // Timeout setzen um Rate Limiting zu vermeiden
-        client.Timeout = TimeSpan.FromSeconds(10);
+        // Höherer Timeout für langsamere Netzwerke
+        client.Timeout = TimeSpan.FromSeconds(30);
 
         var token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
         if (!string.IsNullOrWhiteSpace(token))
@@ -255,6 +255,41 @@ public class UpdateService
         }
 
         return client;
+    }
+
+    private static async Task<T> SendWithRetryAsync<T>(HttpClient client, Func<Task<T>> action)
+    {
+        const int maxVersuche = 3;
+        for (var versuch = 1; versuch <= maxVersuche; versuch++)
+        {
+            try
+            {
+                return await action();
+            }
+            catch (Exception ex) when (IstTransient(ex) && versuch < maxVersuche)
+            {
+                var warteMs = 1000 * versuch;
+                Debug.WriteLine($"⚠️ [UpdateService] Netzwerkproblem (Versuch {versuch}/{maxVersuche}): {ex.Message}. Retry in {warteMs}ms...");
+                await Task.Delay(warteMs);
+            }
+        }
+
+        return await action();
+    }
+
+    private static bool IstTransient(Exception ex)
+    {
+        if (ex is HttpRequestException)
+        {
+            return true;
+        }
+
+        if (ex is TaskCanceledException)
+        {
+            return true;
+        }
+
+        return ex.InnerException is not null && IstTransient(ex.InnerException);
     }
 
     private static Version ParseVersion(string tag)
@@ -273,5 +308,28 @@ public class UpdateService
         return Version.TryParse(clean, out var version)
             ? version
             : new Version(1, 0, 0, 0);
+    }
+
+    private static async Task<HttpResponseMessage> SendWithRetryAsync(HttpClient client, Func<Task<HttpResponseMessage>> sendAsync, int maxRetries = 3)
+    {
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                return await sendAsync();
+            }
+            catch (HttpRequestException httpEx) when (i < maxRetries - 1)
+            {
+                Debug.WriteLine($"🌐 [UpdateService] Netzwerkfehler: {httpEx.Message}. Erneuter Versuch in {TimeSpan.FromSeconds(Math.Pow(2, i))}...");
+                await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, i)));
+            }
+            catch (TaskCanceledException) when (i < maxRetries - 1)
+            {
+                Debug.WriteLine($"⏳ [UpdateService] Timeout. Erneuter Versuch in {TimeSpan.FromSeconds(Math.Pow(2, i))}...");
+                await Task.Delay(TimeSpan.FromSeconds(Math.Pow(2, i)));
+            }
+        }
+
+        throw new Exception("Maximale Anzahl an Versuchen erreicht.");
     }
 }
