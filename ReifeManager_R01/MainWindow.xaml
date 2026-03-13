@@ -312,6 +312,8 @@
                               CanUserDeleteRows="False"
                               HeadersVisibility="Column"
                               Background="#222"
+                              BorderBrush="#444"
+                              BorderThickness="1"
                               GridLinesVisibility="Horizontal">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="110" />
@@ -336,6 +338,8 @@
                                       CanUserDeleteRows="False"
                                       HeadersVisibility="Column"
                                       Background="#222"
+                                      BorderBrush="#444"
+                                      BorderThickness="1"
                                       GridLinesVisibility="Horizontal">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Woche" Binding="{Binding Woche}" Width="65" />

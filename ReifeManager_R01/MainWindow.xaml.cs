@@ -108,18 +108,42 @@ public partial class MainWindow : Window
             return;
         }
 
-        var newOffset = scrollViewer.VerticalOffset - (e.Delta / 3.0);
-        if (newOffset < 0)
+        if (scrollViewer.ScrollableHeight > 0)
         {
-            newOffset = 0;
+            var newOffset = scrollViewer.VerticalOffset - (e.Delta / 3.0);
+            if (newOffset < 0)
+            {
+                newOffset = 0;
+            }
+
+            if (newOffset > scrollViewer.ScrollableHeight)
+            {
+                newOffset = scrollViewer.ScrollableHeight;
+            }
+
+            scrollViewer.ScrollToVerticalOffset(newOffset);
+            e.Handled = true;
+            return;
         }
 
-        if (newOffset > scrollViewer.ScrollableHeight)
+        var parentScrollViewer = FindAncestor<ScrollViewer>(dataGrid);
+        if (parentScrollViewer is null)
         {
-            newOffset = scrollViewer.ScrollableHeight;
+            return;
         }
 
-        scrollViewer.ScrollToVerticalOffset(newOffset);
+        var parentOffset = parentScrollViewer.VerticalOffset - (e.Delta / 3.0);
+        if (parentOffset < 0)
+        {
+            parentOffset = 0;
+        }
+
+        if (parentOffset > parentScrollViewer.ScrollableHeight)
+        {
+            parentOffset = parentScrollViewer.ScrollableHeight;
+        }
+
+        parentScrollViewer.ScrollToVerticalOffset(parentOffset);
         e.Handled = true;
     }
 
