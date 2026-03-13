@@ -106,7 +106,13 @@
                                               Background="Transparent"
                                               BorderThickness="0"
                                               OverridesDefaultStyle="True"
-                                              Opacity="0.01" />
+                                              Opacity="1">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" BorderThickness="0" />
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
                             </Grid>
 
                             <Popup Name="PART_Popup"

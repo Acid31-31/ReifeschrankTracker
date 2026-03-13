@@ -1,7 +1,7 @@
 <Window x:Class="ReifeManager_R01.Views.NeueChargeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Neue Charge" Height="620" Width="430"
+        Title="Neue Charge" Height="620" Width="560"
         Background="#1E1E1E" Foreground="#F3F3F3"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
