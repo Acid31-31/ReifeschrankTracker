@@ -55,6 +55,16 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (e.OriginalSource is DependencyObject source)
+        {
+            var inDataGrid = FindAncestor<DataGrid>(source) is not null;
+            var inComboBox = FindAncestor<ComboBox>(source) is not null;
+            if (inDataGrid || inComboBox)
+            {
+                return;
+            }
+        }
+
         var newOffset = scrollViewer.VerticalOffset - (e.Delta / 3.0);
         if (newOffset < 0)
         {
@@ -68,6 +78,21 @@ public partial class MainWindow : Window
 
         scrollViewer.ScrollToVerticalOffset(newOffset);
         e.Handled = true;
+    }
+
+    private static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
+    {
+        while (current is not null)
+        {
+            if (current is T match)
+            {
+                return match;
+            }
+
+            current = System.Windows.Media.VisualTreeHelper.GetParent(current);
+        }
+
+        return null;
     }
 
     private void StueckeGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

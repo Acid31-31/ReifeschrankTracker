@@ -329,7 +329,7 @@
                             <DataGrid ItemsSource="{Binding WochenReport}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
-                                      Height="170"
+                                      Height="260"
                                       CanUserAddRows="False"
                                       CanUserDeleteRows="False"
                                       HeadersVisibility="Column"
