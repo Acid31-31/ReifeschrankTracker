@@ -11,9 +11,9 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <DebugType>embedded</DebugType>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <Version>1.0.59</Version>
-    <AssemblyVersion>1.0.0.59</AssemblyVersion>
-    <FileVersion>1.0.0.59</FileVersion>
-    <InformationalVersion>1.0.59</InformationalVersion>
+    <Version>1.0.60</Version>
+    <AssemblyVersion>1.0.0.60</AssemblyVersion>
+    <FileVersion>1.0.0.60</FileVersion>
+    <InformationalVersion>1.0.60</InformationalVersion>
   </PropertyGroup>
 </Project>

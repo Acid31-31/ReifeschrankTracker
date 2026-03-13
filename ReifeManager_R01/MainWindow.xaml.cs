@@ -95,6 +95,59 @@ public partial class MainWindow : Window
         return null;
     }
 
+    private void DataGrid_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (sender is not DataGrid dataGrid)
+        {
+            return;
+        }
+
+        var scrollViewer = FindDescendant<ScrollViewer>(dataGrid);
+        if (scrollViewer is null)
+        {
+            return;
+        }
+
+        var newOffset = scrollViewer.VerticalOffset - (e.Delta / 3.0);
+        if (newOffset < 0)
+        {
+            newOffset = 0;
+        }
+
+        if (newOffset > scrollViewer.ScrollableHeight)
+        {
+            newOffset = scrollViewer.ScrollableHeight;
+        }
+
+        scrollViewer.ScrollToVerticalOffset(newOffset);
+        e.Handled = true;
+    }
+
+    private static T? FindDescendant<T>(DependencyObject? root) where T : DependencyObject
+    {
+        if (root is null)
+        {
+            return null;
+        }
+
+        for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i);
+            if (child is T match)
+            {
+                return match;
+            }
+
+            var nested = FindDescendant<T>(child);
+            if (nested is not null)
+            {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
     private void StueckeGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         try
