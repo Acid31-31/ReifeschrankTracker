@@ -329,11 +329,12 @@
                         </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="155" />
+                            <DataGridTextColumn Header="Tage" Binding="{Binding TageSeitAnzeige}" Width="115" IsReadOnly="True" />
                             <DataGridTextColumn Header="Soll-Prozess" Binding="{Binding SollProzess}" Width="155" IsReadOnly="True" />
                             <DataGridTextColumn Header="Ist-Prozess" Binding="{Binding Prozess}" Width="155" />
-                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="155" />
-                            <DataGridTextColumn Header="Temp. (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="140" />
-                            <DataGridTextColumn Header="Feuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="150" />
+                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="140" />
+                            <DataGridTextColumn Header="Temp. (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="130" />
+                            <DataGridTextColumn Header="Feuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="140" />
                             <DataGridTextColumn Header="Notiz" Binding="{Binding Notiz}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>

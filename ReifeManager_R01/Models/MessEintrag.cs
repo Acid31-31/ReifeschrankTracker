@@ -11,6 +11,13 @@ public class MessEintrag
     public string Notiz { get; set; } = string.Empty;
 
     public double VorherigesGewicht { get; set; }
+    public DateTime? VorherigesDatum { get; set; }
+
+    public int TageSeit => VorherigesDatum.HasValue
+        ? Math.Max(0, (Datum.Date - VorherigesDatum.Value.Date).Days)
+        : 0;
+
+    public string TageSeitAnzeige => TageSeit > 0 ? $"{TageSeit} Tage" : "–";
 
     public bool IstKritisch
     {

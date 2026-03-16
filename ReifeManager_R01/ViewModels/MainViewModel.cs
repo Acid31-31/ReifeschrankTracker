@@ -922,6 +922,7 @@ public class MainViewModel : ObservableObject
         for (var i = 0; i < sortiert.Count; i++)
         {
             sortiert[i].VorherigesGewicht = i == 0 ? stueck.Startgewicht : sortiert[i - 1].Gewicht;
+            sortiert[i].VorherigesDatum   = i == 0 ? null : sortiert[i - 1].Datum;
         }
     }
 
