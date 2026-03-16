@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -35,7 +35,7 @@ public class MainViewModel : ObservableObject
 
     public ObservableCollection<string> ProfilOptionen { get; }
 
-    public ObservableCollection<string> ProzessOptionen { get; } = new() { "PÃ¶keln", "Abbrennen", "RÃ¤uchern", "Reifen" };
+    public ObservableCollection<string> ProzessOptionen { get; } = new() { "Pökeln", "Abbrennen", "Räuchern", "Reifen" };
 
     private string _ausgewaehltesProfil = string.Empty;
     public string AusgewaehltesProfil
@@ -113,7 +113,7 @@ public class MainViewModel : ObservableObject
     public int TilesAktiv    => Chargen.Count;
     public int TilesKritisch => Chargen.Count(c => c.StatusUebersicht.Contains("Kritisch") || c.StatusUebersicht.Contains("Warnung"));
     public int TilesFertig   => Chargen.Count(c => c.StatusUebersicht.Contains("Fertig"));
-    public int TilesFaellig  => Chargen.Count(c => c.NaechsteMessungText.Contains("Heute") || c.NaechsteMessungText.Contains("ÃœberfÃ¤llig"));
+    public int TilesFaellig  => Chargen.Count(c => c.NaechsteMessungText.Contains("Heute") || c.NaechsteMessungText.Contains("Überfällig"));
 
     private Charge? _selectedCharge;
     public Charge? SelectedCharge
@@ -313,7 +313,7 @@ public class MainViewModel : ObservableObject
         set => SetProperty(ref _statusmeldung, value);
     }
 
-    private string _updateHinweis = "Update-PrÃ¼fung lÃ¤uft...";
+    private string _updateHinweis = "Update-Prüfung läuft...";
     public string UpdateHinweis
     {
         get => _updateHinweis;
@@ -394,7 +394,7 @@ public class MainViewModel : ObservableObject
 
         NeuerMessProzess = ErmittleSollProzess(NeuesMessdatum);
 
-        Statusmeldung = $"âœ“ Programm gestartet â€” {Chargen.Count} Chargen geladen";
+        Statusmeldung = $"✓ Programm gestartet — {Chargen.Count} Chargen geladen";
         _ = PruefeAufUpdateAsync();
     }
 
@@ -402,7 +402,7 @@ public class MainViewModel : ObservableObject
     {
         var demoCharge = new Charge
         {
-            Bezeichnung = "Demo Coppa MÃ¤rz 2026",
+            Bezeichnung = "Demo Coppa März 2026",
             Fleischtyp = "Coppa",
             Startdatum = DateTime.Today.AddDays(-10),
             ZielverlustProzent = 30,
@@ -412,7 +412,7 @@ public class MainViewModel : ObservableObject
         var stueck1 = new Fleischstueck { Startgewicht = 2500 };
         var stueck2 = new Fleischstueck { Startgewicht = 2300 };
 
-        // Messungen fÃ¼r StÃ¼ck 1
+        // Messungen für Stück 1
         stueck1.Messungen.Add(new MessEintrag
         {
             Datum = DateTime.Today.AddDays(-10),
@@ -435,10 +435,10 @@ public class MainViewModel : ObservableObject
             Gewicht = 2350,
             Temperatur = 12.3,
             Luftfeuchte = 76,
-            Notiz = "Reifung lÃ¤uft gut"
+            Notiz = "Reifung läuft gut"
         });
 
-        // Messungen fÃ¼r StÃ¼ck 2
+        // Messungen für Stück 2
         stueck2.Messungen.Add(new MessEintrag
         {
             Datum = DateTime.Today.AddDays(-10),
@@ -461,7 +461,7 @@ public class MainViewModel : ObservableObject
             Gewicht = 2170,
             Temperatur = 12.3,
             Luftfeuchte = 76,
-            Notiz = "SchÃ¶n auf Gewicht"
+            Notiz = "Schön auf Gewicht"
         });
 
         demoCharge.Stuecke.Add(stueck1);
@@ -471,7 +471,7 @@ public class MainViewModel : ObservableObject
         AktualisiereCharge(demoCharge);
         Speichern();
 
-        Statusmeldung = "âœ“ Demo-Daten erstellt â€” Startklar!";
+        Statusmeldung = "✓ Demo-Daten erstellt — Startklar!";
     }
 
     private string ErzeugeNaechsteBezeichnung(string profil)
@@ -522,7 +522,7 @@ public class MainViewModel : ObservableObject
             !ValidationHelper.IsValidName(NeueBezeichnung) ||
             !ValidationHelper.IsValidLossPercentage(zielverlustProzent))
         {
-            Statusmeldung = "âŒ UngÃ¼ltige Eingabe. Bitte Chargendaten und Zeiten prÃ¼fen.";
+            Statusmeldung = "❌ Ungültige Eingabe. Bitte Chargendaten und Zeiten prüfen.";
             return;
         }
 
@@ -541,7 +541,7 @@ public class MainViewModel : ObservableObject
             AbbrennenTage = abbrennenTage,
             RaeuchernTage = raeuchernTage,
             ReifenTage = reifenTage,
-            StatusUebersicht = "Keine StÃ¼cke"
+            StatusUebersicht = "Keine Stücke"
         };
 
         var rezepte = _rezeptService.HoleRezepteZuProfil(AusgewaehltesProfil);
@@ -555,11 +555,11 @@ public class MainViewModel : ObservableObject
             if (rezeptFenster.ShowDialog() == true && rezeptFenster.AusgewaehlitesRezept is not null)
             {
                 charge.Rezept = rezeptFenster.AusgewaehlitesRezept;
-                Statusmeldung = $"âœ“ Rezept '{charge.Rezept.Name}' ausgewÃ¤hlt.";
+                Statusmeldung = $"✓ Rezept '{charge.Rezept.Name}' ausgewählt.";
             }
             else
             {
-                Statusmeldung = "â„¹ï¸ Kein Rezept ausgewÃ¤hlt â€” manuelle Zeiten werden verwendet.";
+                Statusmeldung = "ℹ️ Kein Rezept ausgewählt — manuelle Zeiten werden verwendet.";
             }
         }
 
@@ -578,7 +578,7 @@ public class MainViewModel : ObservableObject
         NeueRaeuchernTage = profilVorschau.RaeuchernTage.ToString(CultureInfo.CurrentCulture);
         NeueReifenTage = profilVorschau.ReifenTage.ToString(CultureInfo.CurrentCulture);
 
-        Statusmeldung = $"âœ“ Charge '{charge.Bezeichnung}' angelegt ({AusgewaehltesProfil}).";
+        Statusmeldung = $"✓ Charge '{charge.Bezeichnung}' angelegt ({AusgewaehltesProfil}).";
         Speichern();
         AktualisiereWochenReport();
     }
@@ -587,7 +587,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null)
         {
-            Statusmeldung = "âŒ Keine Charge ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Charge ausgewählt.";
             return;
         }
 
@@ -595,7 +595,7 @@ public class MainViewModel : ObservableObject
         var name = zuEntfernen.Bezeichnung;
         Chargen.Remove(zuEntfernen);
         SelectedCharge = Chargen.FirstOrDefault();
-        Statusmeldung = $"âœ“ Charge '{name}' gelÃ¶scht.";
+        Statusmeldung = $"✓ Charge '{name}' gelöscht.";
         Speichern();
     }
 
@@ -603,13 +603,13 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null)
         {
-            Statusmeldung = "âŒ Keine Charge ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Charge ausgewählt.";
             return;
         }
 
         if (!TryParseDouble(NeuesStartgewicht, out var startgewicht) || !ValidationHelper.IsValidWeight(startgewicht))
         {
-            Statusmeldung = "âŒ Startgewicht ungÃ¼ltig (0-1.000.000g).";
+            Statusmeldung = "❌ Startgewicht ungültig (0-1.000.000g).";
             return;
         }
 
@@ -625,7 +625,7 @@ public class MainViewModel : ObservableObject
         SelectedStueck = stueck;
         NeuesStartgewicht = string.Empty;
 
-        Statusmeldung = $"âœ“ StÃ¼ck {SelectedCharge.Stuecke.Count} ({startgewicht:F0}g) angelegt.";
+        Statusmeldung = $"✓ Stück {SelectedCharge.Stuecke.Count} ({startgewicht:F0}g) angelegt.";
         Speichern();
     }
 
@@ -633,13 +633,13 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null || SelectedStueck is null)
         {
-            Statusmeldung = "âŒ Kein StÃ¼ck ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Kein Stück ausgewählt.";
             return;
         }
 
         if (!TryParseDouble(NeuesStartgewicht, out var startgewicht) || !ValidationHelper.IsValidWeight(startgewicht))
         {
-            Statusmeldung = "âŒ Startgewicht ungÃ¼ltig (0-1.000.000g).";
+            Statusmeldung = "❌ Startgewicht ungültig (0-1.000.000g).";
             return;
         }
 
@@ -649,7 +649,7 @@ public class MainViewModel : ObservableObject
         AktualisiereChargeStatus(SelectedCharge);
         OnPropertyChanged(nameof(AktiveStuecke));
 
-        Statusmeldung = $"âœ“ StÃ¼ck aktualisiert auf {startgewicht:F0}g.";
+        Statusmeldung = $"✓ Stück aktualisiert auf {startgewicht:F0}g.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -658,7 +658,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null || SelectedStueck is null)
         {
-            Statusmeldung = "âŒ Kein StÃ¼ck ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Kein Stück ausgewählt.";
             return;
         }
 
@@ -668,7 +668,7 @@ public class MainViewModel : ObservableObject
         AktualisiereChargeStatus(SelectedCharge);
         OnPropertyChanged(nameof(AktiveStuecke));
 
-        Statusmeldung = "âœ“ StÃ¼ck gelÃ¶scht.";
+        Statusmeldung = "✓ Stück gelöscht.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -677,7 +677,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null || SelectedStueck is null)
         {
-            Statusmeldung = "âŒ Keine Charge oder StÃ¼ck ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Charge oder Stück ausgewählt.";
             return;
         }
 
@@ -688,7 +688,7 @@ public class MainViewModel : ObservableObject
             !ValidationHelper.IsValidTemperature(temperatur) ||
             !ValidationHelper.IsValidHumidity(luftfeuchte))
         {
-            Statusmeldung = "âŒ Messwerte ungÃ¼ltig. PrÃ¼fen Sie Gewicht, Temperatur und Luftfeuchte.";
+            Statusmeldung = "❌ Messwerte ungültig. Prüfen Sie Gewicht, Temperatur und Luftfeuchte.";
             return;
         }
 
@@ -718,7 +718,7 @@ public class MainViewModel : ObservableObject
         NeuerMessProzess = ErmittleSollProzess(DateTime.Today);
         SelectedMessung = messung;
 
-        Statusmeldung = $"âœ“ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g, {istProzess}).";
+        Statusmeldung = $"✓ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g, {istProzess}).";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -727,7 +727,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null || SelectedStueck is null || SelectedMessung is null)
         {
-            Statusmeldung = "âŒ Keine Messung ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Messung ausgewählt.";
             return;
         }
 
@@ -738,7 +738,7 @@ public class MainViewModel : ObservableObject
             !ValidationHelper.IsValidTemperature(temperatur) ||
             !ValidationHelper.IsValidHumidity(luftfeuchte))
         {
-            Statusmeldung = "âŒ Messwerte ungÃ¼ltig. PrÃ¼fen Sie Gewicht, Temperatur und Luftfeuchte.";
+            Statusmeldung = "❌ Messwerte ungültig. Prüfen Sie Gewicht, Temperatur und Luftfeuchte.";
             return;
         }
 
@@ -755,7 +755,7 @@ public class MainViewModel : ObservableObject
         AktualisiereChargeStatus(SelectedCharge);
         OnPropertyChanged(nameof(AktiveMessungen));
 
-        Statusmeldung = "âœ“ Messung aktualisiert.";
+        Statusmeldung = "✓ Messung aktualisiert.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -764,7 +764,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null || SelectedStueck is null || SelectedMessung is null)
         {
-            Statusmeldung = "âŒ Keine Messung ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Messung ausgewählt.";
             return;
         }
 
@@ -777,7 +777,7 @@ public class MainViewModel : ObservableObject
         SelectedMessung = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault();
         OnPropertyChanged(nameof(AktiveMessungen));
 
-        Statusmeldung = "âœ“ Messung gelÃ¶scht.";
+        Statusmeldung = "✓ Messung gelöscht.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -786,7 +786,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null)
         {
-            Statusmeldung = "âŒ Keine Charge zum Exportieren ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Charge zum Exportieren ausgewählt.";
             return;
         }
 
@@ -795,11 +795,11 @@ public class MainViewModel : ObservableObject
             var pfad = _csvExportService.ExportiereCharge(SelectedCharge);
             FuegeExportZurHistorieHinzu("CSV", pfad);
             OeffneExportDatei(pfad);
-            Statusmeldung = $"âœ“ CSV exportiert: {Path.GetFileName(pfad)}";
+            Statusmeldung = $"✓ CSV exportiert: {Path.GetFileName(pfad)}";
         }
         catch (Exception ex)
         {
-            Statusmeldung = $"âŒ CSV-Export fehlgeschlagen: {ex.Message}";
+            Statusmeldung = $"❌ CSV-Export fehlgeschlagen: {ex.Message}";
         }
     }
 
@@ -807,7 +807,7 @@ public class MainViewModel : ObservableObject
     {
         if (SelectedCharge is null)
         {
-            Statusmeldung = "âŒ Keine Charge zum Exportieren ausgewÃ¤hlt.";
+            Statusmeldung = "❌ Keine Charge zum Exportieren ausgewählt.";
             return;
         }
 
@@ -816,11 +816,11 @@ public class MainViewModel : ObservableObject
             var pfad = _pdfExportService.ExportierePdf(SelectedCharge);
             FuegeExportZurHistorieHinzu("Bericht", pfad);
             OeffneExportDatei(pfad);
-            Statusmeldung = $"âœ“ Bericht exportiert: {Path.GetFileName(pfad)}";
+            Statusmeldung = $"✓ Bericht exportiert: {Path.GetFileName(pfad)}";
         }
         catch (Exception ex)
         {
-            Statusmeldung = $"âŒ Bericht-Export fehlgeschlagen: {ex.Message}";
+            Statusmeldung = $"❌ Bericht-Export fehlgeschlagen: {ex.Message}";
         }
     }
 
@@ -849,7 +849,7 @@ public class MainViewModel : ObservableObject
 
         if (!File.Exists(pfad))
         {
-            Statusmeldung = "âŒ Exportdatei nicht gefunden.";
+            Statusmeldung = "❌ Exportdatei nicht gefunden.";
             return;
         }
 
@@ -866,7 +866,7 @@ public class MainViewModel : ObservableObject
         var ordner = Path.GetDirectoryName(pfad);
         if (string.IsNullOrWhiteSpace(ordner) || !Directory.Exists(ordner))
         {
-            Statusmeldung = "âŒ Exportordner nicht gefunden.";
+            Statusmeldung = "❌ Exportordner nicht gefunden.";
             return;
         }
 
@@ -909,15 +909,15 @@ public class MainViewModel : ObservableObject
     private void AktualisiereChargeStatus(Charge charge)
     {
         if (charge.Stuecke.Count == 0)
-            charge.StatusUebersicht = "Keine StÃ¼cke";
+            charge.StatusUebersicht = "Keine Stücke";
         else if (charge.Stuecke.Any(s => s.Status == ReifeStatus.Kritisch))
-            charge.StatusUebersicht = "ðŸ”´ Kritisch";
+            charge.StatusUebersicht = "🔴 Kritisch";
         else if (charge.Stuecke.Any(s => s.Status == ReifeStatus.Warnung))
-            charge.StatusUebersicht = "ðŸŸ¡ Warnung";
+            charge.StatusUebersicht = "🟡 Warnung";
         else if (charge.Stuecke.All(s => s.Status == ReifeStatus.Fertig))
-            charge.StatusUebersicht = "ðŸŸ¢ Fertig";
+            charge.StatusUebersicht = "🟢 Fertig";
         else
-            charge.StatusUebersicht = "ðŸŸ  Reift";
+            charge.StatusUebersicht = "🟠 Reift";
 
         AktualisiereChargeFortschritt(charge);
     }
@@ -936,17 +936,21 @@ public class MainViewModel : ObservableObject
         else
         {
             var diff = (letzte.Datum.Date.AddDays(7) - DateTime.Today).Days;
-            charge.NaechsteMessungText = diff < 0  ? $"âš ï¸ ÃœberfÃ¤llig seit {-diff} Tag(en)"
-                                       : diff == 0 ? "â° Heute fÃ¤llig!"
-                                                   : $"ðŸ“… In {diff} Tag(en)";
+            charge.NaechsteMessungText = diff < 0  ? $"⚠️ Überfällig seit {-diff} Tag(en)"
+                                       : diff == 0 ? "⏰ Heute fällig!"
+                                                   : $"📅 In {diff} Tag(en)";
         }
 
         var avgVerlust = charge.Stuecke.Count > 0 ? charge.Stuecke.Average(s => s.GewichtsverlustProzent) : 0;
-        if (avgVerlust >= charge.ZielverlustProzent && charge.Stuecke.Count > 0)
+        if (charge.Stuecke.Count == 0)
         {
-            charge.PrognoseText = "âœ… Zielverlust erreicht";
+            charge.PrognoseText = "–";
         }
-        else if (charge.Stuecke.Count > 0)
+        else if (avgVerlust >= charge.ZielverlustProzent)
+        {
+            charge.PrognoseText = "✅ Zielverlust erreicht";
+        }
+        else
         {
             var tagesrate = charge.Stuecke
                 .Where(s => s.DurchschnittlicherTagesverlust > 0)
@@ -954,11 +958,7 @@ public class MainViewModel : ObservableObject
                 .DefaultIfEmpty(0).Average();
             charge.PrognoseText = tagesrate > 0
                 ? $"~{DateTime.Today.AddDays((int)Math.Ceiling((charge.ZielverlustProzent - avgVerlust) / tagesrate)):dd.MM.yyyy}"
-                : "Prognose nicht mÃ¶glich";
-        }
-        else
-        {
-            charge.PrognoseText = "â€“";
+                : "Prognose nicht möglich";
         }
 
         AktualisiereDashboardKacheln();
@@ -986,7 +986,7 @@ public class MainViewModel : ObservableObject
 
         if (!ValidationHelper.IsValidWeight(SelectedStueck.Startgewicht))
         {
-            Statusmeldung = "âŒ UngÃ¼ltiges Startgewicht im StÃ¼ck.";
+            Statusmeldung = "❌ Ungültiges Startgewicht im Stück.";
             return;
         }
 
@@ -995,7 +995,7 @@ public class MainViewModel : ObservableObject
         AktualisiereChargeStatus(SelectedCharge);
         NeuesStartgewicht = SelectedStueck.Startgewicht.ToString("F0", CultureInfo.CurrentCulture);
 
-        Statusmeldung = "âœ“ StÃ¼ck per Doppelklick bearbeitet und gespeichert.";
+        Statusmeldung = "✓ Stück per Doppelklick bearbeitet und gespeichert.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -1011,7 +1011,7 @@ public class MainViewModel : ObservableObject
             !ValidationHelper.IsValidTemperature(SelectedMessung.Temperatur) ||
             !ValidationHelper.IsValidHumidity(SelectedMessung.Luftfeuchte))
         {
-            Statusmeldung = "âŒ UngÃ¼ltige Messwerte in der Tabelle.";
+            Statusmeldung = "❌ Ungültige Messwerte in der Tabelle.";
             return;
         }
 
@@ -1030,7 +1030,7 @@ public class MainViewModel : ObservableObject
         NeuerMessProzess = SelectedMessung.Prozess;
         NeueNotiz = SelectedMessung.Notiz;
 
-        Statusmeldung = "âœ“ Messung per Doppelklick bearbeitet und gespeichert.";
+        Statusmeldung = "✓ Messung per Doppelklick bearbeitet und gespeichert.";
         Speichern();
         AktualisiereDiagramm();
     }
@@ -1123,7 +1123,7 @@ public class MainViewModel : ObservableObject
     {
         if (tageSeitStart < charge.PoekelnTage)
         {
-            return "PÃ¶keln";
+            return "Pökeln";
         }
 
         tageSeitStart -= charge.PoekelnTage;
@@ -1135,7 +1135,7 @@ public class MainViewModel : ObservableObject
         tageSeitStart -= charge.AbbrennenTage;
         if (tageSeitStart < charge.RaeuchernTage)
         {
-            return "RÃ¤uchern";
+            return "Räuchern";
         }
 
         return "Reifen";
@@ -1145,12 +1145,12 @@ public class MainViewModel : ObservableObject
     {
         if (verlustProzent >= 4.0)
         {
-            return ("Zu schnell", "Luftfeuchte erhÃ¶hen (+3-5%) / Temperatur leicht senken");
+            return ("Zu schnell", "Luftfeuchte erhöhen (+3-5%) / Temperatur leicht senken");
         }
 
         if (phase == "Reifen" && verlustProzent <= 0.5)
         {
-            return ("Zu langsam", "Luftfeuchte leicht senken oder Luftzirkulation erhÃ¶hen");
+            return ("Zu langsam", "Luftfeuchte leicht senken oder Luftzirkulation erhöhen");
         }
 
         return ("Gut", "Verlauf im Zielbereich");
@@ -1261,7 +1261,7 @@ public class MainViewModel : ObservableObject
         var empfohlen = _reifePlanService.HoleEmpfohlenesFleisch(AusgewaehltesProfil);
 
         MessageBox.Show(
-            $"Profil: {AusgewaehltesProfil}\n\nEmpfohlenes Fleisch:\n{empfohlen}\n\nAblauf wird beim Anlegen automatisch gesetzt (PÃ¶keln, Abbrennen, RÃ¤uchern, Reifen).",
+            $"Profil: {AusgewaehltesProfil}\n\nEmpfohlenes Fleisch:\n{empfohlen}\n\nAblauf wird beim Anlegen automatisch gesetzt (Pökeln, Abbrennen, Räuchern, Reifen).",
             "Profil-Empfehlung",
             MessageBoxButton.OK,
             MessageBoxImage.Information);
@@ -1271,18 +1271,18 @@ public class MainViewModel : ObservableObject
     {
         try
         {
-            Debug.WriteLine($"ðŸ” [ViewModel] PrÃ¼fung gestartet (manuell={manuell})");
+            Debug.WriteLine($"🔍 [ViewModel] Prüfung gestartet (manuell={manuell})");
             
             if (manuell)
             {
-                Statusmeldung = "â³ PrÃ¼fe auf Updates...";
+                Statusmeldung = "⏳ Prüfe auf Updates...";
             }
 
             var currentVersion = FormatVersionForDisplay(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0");
             var update = await _updateService.PruefeAufUpdateAsync();
             var updateVersionText = update is null ? string.Empty : FormatVersionForDisplay(update.Version);
             
-            // Zeige Update-Status-Fenster wenn manuell geprÃ¼ft
+            // Zeige Update-Status-Fenster wenn manuell geprüft
             if (manuell)
             {
                 var statusWindow = new Views.UpdateCheckWindow(currentVersion, update)
@@ -1294,8 +1294,8 @@ public class MainViewModel : ObservableObject
                 if (update is not null)
                 {
                     var result = MessageBox.Show(
-                        $"Neue Version v{updateVersionText} verfÃ¼gbar!\n\nJetzt herunterladen und installieren?",
-                        "Update verfÃ¼gbar",
+                        $"Neue Version v{updateVersionText} verfügbar!\n\nJetzt herunterladen und installieren?",
+                        "Update verfügbar",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Information);
 
@@ -1308,23 +1308,23 @@ public class MainViewModel : ObservableObject
                 return;
             }
 
-            // Automatische PrÃ¼fung im Hintergrund
+            // Automatische Prüfung im Hintergrund
             if (update is null)
             {
-                Debug.WriteLine("â„¹ï¸ [ViewModel] Kein Update verfÃ¼gbar");
+                Debug.WriteLine("ℹ️ [ViewModel] Kein Update verfügbar");
                 UpdateVerfuegbar = false;
-                UpdateHinweis = "âœ“ Anwendung ist aktuell";
+                UpdateHinweis = "✓ Anwendung ist aktuell";
                 return;
             }
 
-            Debug.WriteLine($"âœ… [ViewModel] Update verfÃ¼gbar: v{updateVersionText}");
+            Debug.WriteLine($"✅ [ViewModel] Update verfügbar: v{updateVersionText}");
             _verfuegbaresUpdate = update;
             UpdateVerfuegbar = true;
-            UpdateHinweis = $"â¬† Neue Version verfÃ¼gbar: {updateVersionText}";
+            UpdateHinweis = $"⬆ Neue Version verfügbar: {updateVersionText}";
 
             var autoResult = MessageBox.Show(
-                $"Es ist eine neue Version verfÃ¼gbar ({updateVersionText}).\n\nJetzt herunterladen und installieren?",
-                "Update verfÃ¼gbar",
+                $"Es ist eine neue Version verfügbar ({updateVersionText}).\n\nJetzt herunterladen und installieren?",
+                "Update verfügbar",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Information);
 
@@ -1335,16 +1335,16 @@ public class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"âŒ [ViewModel] Update-Fehler: {ex.GetType().Name} - {ex.Message}");
+            Debug.WriteLine($"❌ [ViewModel] Update-Fehler: {ex.GetType().Name} - {ex.Message}");
             UpdateVerfuegbar = false;
             var grund = string.IsNullOrWhiteSpace(ex.Message) ? "Unbekannter Fehler" : ex.Message;
-            UpdateHinweis = $"âš  Update-PrÃ¼fung fehlgeschlagen";
+            UpdateHinweis = $"⚠ Update-Prüfung fehlgeschlagen";
 
             if (manuell)
             {
-                Statusmeldung = $"âŒ Update-Fehler: {grund}";
+                Statusmeldung = $"❌ Update-Fehler: {grund}";
                 MessageBox.Show(
-                    $"Update-PrÃ¼fung fehlgeschlagen:\n\n{grund}\n\nBitte Ã¼berprÃ¼fen Sie Ihre Internetverbindung.",
+                    $"Update-Prüfung fehlgeschlagen:\n\n{grund}\n\nBitte überprüfen Sie Ihre Internetverbindung.",
                     "Update-Fehler",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
@@ -1354,24 +1354,24 @@ public class MainViewModel : ObservableObject
 
     private async Task UpdateStartenAsync()
     {
-        Debug.WriteLine("ðŸ“¥ [ViewModel] UpdateStartenAsync aufgerufen");
+        Debug.WriteLine("📥 [ViewModel] UpdateStartenAsync aufgerufen");
         
         if (_verfuegbaresUpdate is null)
         {
-            Debug.WriteLine("âš ï¸ [ViewModel] Kein Update gespeichert, Ã¶ffne GitHub Releases");
+            Debug.WriteLine("⚠️ [ViewModel] Kein Update gespeichert, öffne GitHub Releases");
             Process.Start(new ProcessStartInfo(UpdateService.ReleasePageUrl)
             {
                 UseShellExecute = true
             });
 
-            Statusmeldung = "â„¹ï¸ Keine installierbare Update-Datei verfÃ¼gbar. GitHub-Releases wurden geÃ¶ffnet.";
+            Statusmeldung = "ℹ️ Keine installierbare Update-Datei verfügbar. GitHub-Releases wurden geöffnet.";
             return;
         }
 
         try
         {
-            Debug.WriteLine($"â³ [ViewModel] Lade Update herunter: {_verfuegbaresUpdate.DownloadUrl}");
-            Statusmeldung = "â³ Update wird heruntergeladen...";
+            Debug.WriteLine($"⏳ [ViewModel] Lade Update herunter: {_verfuegbaresUpdate.DownloadUrl}");
+            Statusmeldung = "⏳ Update wird heruntergeladen...";
 
             var datenPfad = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -1384,22 +1384,22 @@ public class MainViewModel : ObservableObject
                 Directory.CreateDirectory(backupOrdner);
                 var backupPfad = Path.Combine(backupOrdner, $"chargen_backup_{DateTime.Now:yyyyMMdd_HHmmss}.json");
                 File.Copy(datenPfad, backupPfad, overwrite: true);
-                Debug.WriteLine($"âœ… [ViewModel] Backup erstellt: {backupPfad}");
+                Debug.WriteLine($"✅ [ViewModel] Backup erstellt: {backupPfad}");
             }
 
             var installerPfad = await _updateService.LadeUpdateHerunterAsync(_verfuegbaresUpdate);
-            Debug.WriteLine($"âœ… [ViewModel] Update heruntergeladen: {installerPfad}");
+            Debug.WriteLine($"✅ [ViewModel] Update heruntergeladen: {installerPfad}");
             
-            Debug.WriteLine($"ðŸš€ [ViewModel] Starte Installer: {installerPfad}");
+            Debug.WriteLine($"🚀 [ViewModel] Starte Installer: {installerPfad}");
             _updateService.StarteInstaller(installerPfad);
 
-            Statusmeldung = "âœ“ Update gestartet (automatische Installation). Anwendung wird beendet...";
+            Statusmeldung = "✓ Update gestartet (automatische Installation). Anwendung wird beendet...";
             Application.Current.Shutdown();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"âŒ [ViewModel] Update fehlgeschlagen: {ex.GetType().Name} - {ex.Message}");
-            Statusmeldung = $"âŒ Update fehlgeschlagen: {ex.Message}";
+            Debug.WriteLine($"❌ [ViewModel] Update fehlgeschlagen: {ex.GetType().Name} - {ex.Message}");
+            Statusmeldung = $"❌ Update fehlgeschlagen: {ex.Message}";
         }
     }
 
@@ -1502,4 +1502,3 @@ public class MainViewModel : ObservableObject
             : fallback;
     }
 }
-
