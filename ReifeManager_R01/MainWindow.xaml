@@ -347,31 +347,30 @@
                                       GridLinesVisibility="Horizontal">
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
-                                        <Setter Property="Background" Value="#2A2A2A" />
-                                        <Setter Property="Foreground" Value="#F3F3F3" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Bewertung}" Value="Zu schnell">
-                                                <Setter Property="Background" Value="#4D1A1A" />
-                                                <Setter Property="Foreground" Value="#FF6B6B" />
+                                                <Setter Property="Background" Value="#4D2600" />
+                                                <Setter Property="Foreground" Value="#FF9800" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Bewertung}" Value="Zu langsam">
-                                                <Setter Property="Background" Value="#3D3519" />
-                                                <Setter Property="Foreground" Value="#FFD54F" />
+                                                <Setter Property="Background" Value="#1A2A1A" />
+                                                <Setter Property="Foreground" Value="#AAAAAA" />
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding ProzessWarnung}" Value="{x:Null}">
-                                                <Setter Property="Background" Value="#2A2A2A" />
+                                            <DataTrigger Binding="{Binding Bewertung}" Value="Gut">
+                                                <Setter Property="Background" Value="#1A2D1A" />
+                                                <Setter Property="Foreground" Value="#66BB6A" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </DataGrid.RowStyle>
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Woche" Binding="{Binding Woche}" Width="65" />
-                                    <DataGridTextColumn Header="Zeitraum" Binding="{Binding Zeitraum}" Width="120" />
-                                    <DataGridTextColumn Header="Soll" Binding="{Binding SollProzess}" Width="85" />
-                                    <DataGridTextColumn Header="Ist" Binding="{Binding IstProzess}" Width="85" />
-                                    <DataGridTextColumn Header="Warnung" Binding="{Binding ProzessWarnung}" Width="190" />
-                                    <DataGridTextColumn Header="Verlust %" Binding="{Binding GewichtsverlustProzent, StringFormat=F2}" Width="90" />
-                                    <DataGridTextColumn Header="Bewertung" Binding="{Binding Bewertung}" Width="90" />
+                                    <DataGridTextColumn Header="Woche" Binding="{Binding Woche}" Width="90" />
+                                    <DataGridTextColumn Header="Zeitraum" Binding="{Binding Zeitraum}" Width="180" />
+                                    <DataGridTextColumn Header="Soll" Binding="{Binding SollProzess}" Width="130" />
+                                    <DataGridTextColumn Header="Ist" Binding="{Binding IstProzess}" Width="130" />
+                                    <DataGridTextColumn Header="⚠ Warnung" Binding="{Binding ProzessWarnung}" Width="250" />
+                                    <DataGridTextColumn Header="Verlust %" Binding="{Binding GewichtsverlustProzent, StringFormat=F2}" Width="120" />
+                                    <DataGridTextColumn Header="Bewertung" Binding="{Binding Bewertung}" Width="130" />
                                     <DataGridTextColumn Header="Empfehlung" Binding="{Binding Empfehlung}" Width="*" />
                                 </DataGrid.Columns>
                             </DataGrid>

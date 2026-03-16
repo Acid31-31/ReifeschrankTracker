@@ -40,24 +40,7 @@ public class JsonStorageService
         }
 
         var json = File.ReadAllText(_dateiPfad);
-        var chargen = JsonSerializer.Deserialize<List<Charge>>(json, _options) ?? new List<Charge>();
-
-        // Datenmigration: auto-generierte Standard-Notiz "Reifung läuft gut" entfernen
-        foreach (var charge in chargen)
-        {
-            foreach (var stueck in charge.Stuecke)
-            {
-                foreach (var messung in stueck.Messungen)
-                {
-                    if (string.Equals(messung.Notiz?.Trim(), "Reifung läuft gut", StringComparison.OrdinalIgnoreCase))
-                    {
-                        messung.Notiz = string.Empty;
-                    }
-                }
-            }
-        }
-
-        return chargen;
+        return JsonSerializer.Deserialize<List<Charge>>(json, _options) ?? new List<Charge>();
     }
 
     public void Speichern(IEnumerable<Charge> chargen)

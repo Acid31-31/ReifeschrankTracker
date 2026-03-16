@@ -181,7 +181,8 @@ public class MainViewModel : ObservableObject
             NeuerMessProzess = string.IsNullOrWhiteSpace(_selectedMessung.Prozess)
                 ? _selectedMessung.SollProzess
                 : _selectedMessung.Prozess;
-            // Notiz NICHT auto-füllen — nur beim expliziten Bearbeiten laden
+            // Notiz NICHT automatisch übernehmen – Benutzer soll selbst eingeben
+            NeueNotiz = string.Empty;
         }
     }
 
@@ -711,7 +712,22 @@ public class MainViewModel : ObservableObject
         NeuerMessProzess = ErmittleSollProzess(DateTime.Today);
         SelectedMessung = messung;
 
-        Statusmeldung = $"✓ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g, {istProzess}).";
+        var statusText = $"✓ Messung vom {NeuesMessdatum:dd.MM.yyyy} gespeichert ({messgewicht:F0}g, {istProzess}).";
+        var stueckStatus = SelectedStueck.Status;
+        if (stueckStatus == ReifeStatus.Kritisch)
+        {
+            statusText += "  ⚠️ KRITISCH: Gewichtsverlust zu schnell! Luftfeuchte erhöhen.";
+        }
+        else if (stueckStatus == ReifeStatus.Warnung)
+        {
+            statusText += "  ⚠️ Warnung: Verlust über 35% – prüfen Sie die Reifebedingungen.";
+        }
+        else if (stueckStatus == ReifeStatus.Fertig)
+        {
+            statusText += "  ✅ Zielverlust erreicht – Stück ist fertig!";
+        }
+
+        Statusmeldung = statusText;
         Speichern();
         AktualisiereDiagramm();
     }
@@ -724,11 +740,33 @@ public class MainViewModel : ObservableObject
             return;
         }
 
-        // Beim Ändern: aktuelle Notiz der Messung in Eingabefeld laden (falls noch nicht befüllt)
-        if (string.IsNullOrWhiteSpace(NeueNotiz))
+        if (!TryParseDouble(NeuesMessgewicht, out var messgewicht) ||
+            !TryParseDouble(NeueTemperatur, out var temperatur) ||
+            !TryParseDouble(NeueLuftfeuchte, out var luftfeuchte) ||
+            !ValidationHelper.IsValidWeight(messgewicht) ||
+            !ValidationHelper.IsValidTemperature(temperatur) ||
+            !ValidationHelper.IsValidHumidity(luftfeuchte))
         {
-            NeueNotiz = SelectedMessung.Notiz;
+            Statusmeldung = "❌ Messwerte ungültig. Prüfen Sie Gewicht, Temperatur und Luftfeuchte.";
+            return;
         }
+
+        SelectedMessung.Datum = NeuesMessdatum;
+        SelectedMessung.Gewicht = messgewicht;
+        SelectedMessung.Temperatur = temperatur;
+        SelectedMessung.Luftfeuchte = luftfeuchte;
+        SelectedMessung.SollProzess = ErmittleSollProzess(NeuesMessdatum);
+        SelectedMessung.Prozess = NormalisiereProzess(NeuerMessProzess, SelectedMessung.SollProzess);
+        SelectedMessung.Notiz = NeueNotiz.Trim();
+
+        var bezug = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
+        AktualisiereStueck(SelectedCharge, SelectedStueck, bezug);
+        AktualisiereChargeStatus(SelectedCharge);
+        OnPropertyChanged(nameof(AktiveMessungen));
+
+        Statusmeldung = "✓ Messung aktualisiert.";
+        Speichern();
+        AktualisiereDiagramm();
     }
 
     private void MessungLoeschen()
