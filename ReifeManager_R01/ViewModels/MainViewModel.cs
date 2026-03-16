@@ -181,7 +181,7 @@ public class MainViewModel : ObservableObject
             NeuerMessProzess = string.IsNullOrWhiteSpace(_selectedMessung.Prozess)
                 ? _selectedMessung.SollProzess
                 : _selectedMessung.Prozess;
-            NeueNotiz = _selectedMessung.Notiz;
+            // Notiz NICHT auto-füllen — nur beim expliziten Bearbeiten laden
         }
     }
 
@@ -724,33 +724,11 @@ public class MainViewModel : ObservableObject
             return;
         }
 
-        if (!TryParseDouble(NeuesMessgewicht, out var messgewicht) ||
-            !TryParseDouble(NeueTemperatur, out var temperatur) ||
-            !TryParseDouble(NeueLuftfeuchte, out var luftfeuchte) ||
-            !ValidationHelper.IsValidWeight(messgewicht) ||
-            !ValidationHelper.IsValidTemperature(temperatur) ||
-            !ValidationHelper.IsValidHumidity(luftfeuchte))
+        // Beim Ändern: aktuelle Notiz der Messung in Eingabefeld laden (falls noch nicht befüllt)
+        if (string.IsNullOrWhiteSpace(NeueNotiz))
         {
-            Statusmeldung = "❌ Messwerte ungültig. Prüfen Sie Gewicht, Temperatur und Luftfeuchte.";
-            return;
+            NeueNotiz = SelectedMessung.Notiz;
         }
-
-        SelectedMessung.Datum = NeuesMessdatum;
-        SelectedMessung.Gewicht = messgewicht;
-        SelectedMessung.Temperatur = temperatur;
-        SelectedMessung.Luftfeuchte = luftfeuchte;
-        SelectedMessung.SollProzess = ErmittleSollProzess(NeuesMessdatum);
-        SelectedMessung.Prozess = NormalisiereProzess(NeuerMessProzess, SelectedMessung.SollProzess);
-        SelectedMessung.Notiz = NeueNotiz.Trim();
-
-        var bezug = SelectedStueck.Messungen.OrderByDescending(m => m.Datum).FirstOrDefault()?.Datum ?? DateTime.Today;
-        AktualisiereStueck(SelectedCharge, SelectedStueck, bezug);
-        AktualisiereChargeStatus(SelectedCharge);
-        OnPropertyChanged(nameof(AktiveMessungen));
-
-        Statusmeldung = "✓ Messung aktualisiert.";
-        Speichern();
-        AktualisiereDiagramm();
     }
 
     private void MessungLoeschen()

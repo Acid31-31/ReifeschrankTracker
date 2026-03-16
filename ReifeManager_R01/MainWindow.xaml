@@ -345,6 +345,25 @@
                                       BorderBrush="#444"
                                       BorderThickness="1"
                                       GridLinesVisibility="Horizontal">
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="#2A2A2A" />
+                                        <Setter Property="Foreground" Value="#F3F3F3" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Bewertung}" Value="Zu schnell">
+                                                <Setter Property="Background" Value="#4D1A1A" />
+                                                <Setter Property="Foreground" Value="#FF6B6B" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Bewertung}" Value="Zu langsam">
+                                                <Setter Property="Background" Value="#3D3519" />
+                                                <Setter Property="Foreground" Value="#FFD54F" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ProzessWarnung}" Value="{x:Null}">
+                                                <Setter Property="Background" Value="#2A2A2A" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Woche" Binding="{Binding Woche}" Width="65" />
                                     <DataGridTextColumn Header="Zeitraum" Binding="{Binding Zeitraum}" Width="120" />
