@@ -19,16 +19,47 @@ public class MessEintrag
 
     public string TageSeitAnzeige => TageSeit > 0 ? $"{TageSeit} Tage" : "–";
 
-    public bool IstKritisch
+    private double VerlustSeitLetzterMessung
     {
         get
         {
             if (VorherigesGewicht <= 0 || Gewicht <= 0)
             {
-                return false;
+                return 0;
             }
-            var wochenVerlust = ((VorherigesGewicht - Gewicht) / VorherigesGewicht) * 100.0;
-            return wochenVerlust > 8.0;
+            return ((VorherigesGewicht - Gewicht) / VorherigesGewicht) * 100.0;
+        }
+    }
+
+    public bool IstKritisch => VerlustSeitLetzterMessung > 8.0;
+
+    public string StatusAnzeige
+    {
+        get
+        {
+            var verlust = VerlustSeitLetzterMessung;
+
+            if (verlust > 8.0)
+            {
+                return "⚠️ Zu schnell getrocknet";
+            }
+
+            if (TageSeit >= 7 && verlust < 0.5)
+            {
+                return "⏳ Zu langsam";
+            }
+
+            if (verlust > 3.5)
+            {
+                return "⚠️ Verlust erhöht";
+            }
+
+            if (VorherigesGewicht <= 0)
+            {
+                return "–";
+            }
+
+            return "✅ OK";
         }
     }
 }
