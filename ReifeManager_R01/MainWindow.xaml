@@ -64,10 +64,29 @@
                         <DataTemplate>
                             <Border Padding="8" Margin="0,0,0,8" Background="#333" CornerRadius="5">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Bezeichnung}" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Bezeichnung}" FontWeight="Bold" FontSize="14" />
                                     <TextBlock Text="{Binding Fleischtyp}" Opacity="0.85" FontSize="12" />
                                     <TextBlock Text="{Binding Startdatum, StringFormat='📅 {0:dd.MM.yyyy}'}" Opacity="0.75" FontSize="12" />
                                     <TextBlock Text="{Binding StatusUebersicht}" Foreground="#6EB7FF" FontWeight="SemiBold" FontSize="12" />
+                                    <ProgressBar Value="{Binding FortschrittProzent}" Maximum="100" Minimum="0" Height="7" Margin="0,4,0,1">
+                                        <ProgressBar.Style>
+                                            <Style TargetType="ProgressBar">
+                                                <Setter Property="Background" Value="#1A1A1A"/>
+                                                <Setter Property="Foreground" Value="#FF9800"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding StatusUebersicht}" Value="🔴 Kritisch">
+                                                        <Setter Property="Foreground" Value="#FF5722"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding StatusUebersicht}" Value="🟢 Fertig">
+                                                        <Setter Property="Foreground" Value="#4CAF50"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ProgressBar.Style>
+                                    </ProgressBar>
+                                    <TextBlock FontSize="10" Opacity="0.7">
+                                        <Run Text="{Binding FortschrittProzent, StringFormat=F0}"/><Run Text="% von Ziel  •  "/><Run Text="{Binding NaechsteMessungText}"/>
+                                    </TextBlock>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -90,6 +109,43 @@
                             <Button Content="🗑 Charge löschen" Command="{Binding ChargeLoeschenCommand}" Height="30" Padding="12,0" Background="#DD3333" />
                         </StackPanel>
                     </DockPanel>
+
+                    <!-- Übersichts-Kacheln -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="#1A2840" CornerRadius="8" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="📦 Chargen" FontSize="13" Opacity="0.8"/>
+                                <TextBlock Text="{Binding TilesAktiv}" FontSize="40" FontWeight="Bold" Foreground="#64B5F6"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="#3A1500" CornerRadius="8" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="⚠️ Kritisch/Warnung" FontSize="13" Opacity="0.8"/>
+                                <TextBlock Text="{Binding TilesKritisch}" FontSize="40" FontWeight="Bold" Foreground="#FF9800"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="4" Background="#1A2A12" CornerRadius="8" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="📅 Messung fällig" FontSize="13" Opacity="0.8"/>
+                                <TextBlock Text="{Binding TilesFaellig}" FontSize="40" FontWeight="Bold" Foreground="#81C784"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="6" Background="#1A1A3A" CornerRadius="8" Padding="14,10">
+                            <StackPanel>
+                                <TextBlock Text="✅ Fertig" FontSize="13" Opacity="0.8"/>
+                                <TextBlock Text="{Binding TilesFertig}" FontSize="40" FontWeight="Bold" Foreground="#90CAF9"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
 
                     <Border Background="#2F3A1F" CornerRadius="6" Padding="10" Margin="0,0,0,12" Cursor="Hand">
                         <Border.Style>
@@ -169,6 +225,8 @@
                                 <TextBlock Text="{Binding SelectedCharge.ZielverlustProzent, StringFormat='Zielverlust: {0:F1}%'}" />
                                 <TextBlock Text="{Binding SelectedCharge.Stuecke.Count, StringFormat='Stücke: {0}'}" />
                                 <TextBlock Text="{Binding SelectedCharge.StatusUebersicht}" Foreground="#6EB7FF" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding SelectedCharge.NaechsteMessungText, StringFormat='Nächste Messung: {0}'}" FontSize="12" Foreground="#DCE775" Opacity="0.9" />
+                                <TextBlock Text="{Binding SelectedCharge.PrognoseText, StringFormat='Prognose fertig: {0}'}" FontSize="12" Foreground="#FFD54F" Opacity="0.9" />
                                 <TextBlock Text="{Binding SelectedCharge.PoekelnTage, StringFormat='Pökeln: {0} Tage'}" FontSize="12" Opacity="0.9" />
                                 <TextBlock Text="{Binding SelectedCharge.AbbrennenTage, StringFormat='Abbrennen: {0} Tage'}" FontSize="12" Opacity="0.9" />
                                 <TextBlock Text="{Binding SelectedCharge.RaeuchernTage, StringFormat='Räuchern: {0} Tage'}" FontSize="12" Opacity="0.9" />
@@ -329,13 +387,11 @@
                         </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="155" />
-                            <DataGridTextColumn Header="Tage" Binding="{Binding TageSeitAnzeige}" Width="115" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Status" Binding="{Binding StatusAnzeige}" Width="250" IsReadOnly="True" />
                             <DataGridTextColumn Header="Soll-Prozess" Binding="{Binding SollProzess}" Width="155" IsReadOnly="True" />
                             <DataGridTextColumn Header="Ist-Prozess" Binding="{Binding Prozess}" Width="155" />
-                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="140" />
-                            <DataGridTextColumn Header="Temp. (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="130" />
-                            <DataGridTextColumn Header="Feuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="140" />
+                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="155" />
+                            <DataGridTextColumn Header="Temp. (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="140" />
+                            <DataGridTextColumn Header="Feuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="150" />
                             <DataGridTextColumn Header="Notiz" Binding="{Binding Notiz}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -365,7 +421,7 @@
                                                 <Setter Property="Foreground" Value="#FF9800" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Bewertung}" Value="Zu langsam">
-                                                <Setter Property="Background" Value="#1A2A1A" />
+                                                <Setter Property="Background" Value="#1A2D1A" />
                                                 <Setter Property="Foreground" Value="#AAAAAA" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding Bewertung}" Value="Gut">

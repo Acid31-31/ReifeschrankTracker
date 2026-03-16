@@ -85,4 +85,25 @@ public class Charge : ObservableObject
         get => _statusUebersicht;
         set => SetProperty(ref _statusUebersicht, value);
     }
+
+    private double _fortschrittProzent;
+    public double FortschrittProzent
+    {
+        get => _fortschrittProzent;
+        set => SetProperty(ref _fortschrittProzent, value);
+    }
+
+    private string _naechsteMessungText = "–";
+    public string NaechsteMessungText
+    {
+        get => _naechsteMessungText;
+        set => SetProperty(ref _naechsteMessungText, value);
+    }
+
+    private string _prognoseText = "–";
+    public string PrognoseText
+    {
+        get => _prognoseText;
+        set => SetProperty(ref _prognoseText, value);
+    }
 }
