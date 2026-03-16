@@ -123,7 +123,7 @@ public class MainViewModel : ObservableObject
 
             SelectedStueck = _selectedCharge?.Stuecke.FirstOrDefault();
             OnPropertyChanged(nameof(AktiveStuecke));
-            AktualisiereWochenReport();
+            AktivisiereWochenReport();
             AktualisiereDiagramm();
         }
     }
@@ -574,7 +574,7 @@ public class MainViewModel : ObservableObject
 
         Statusmeldung = $"✓ Charge '{charge.Bezeichnung}' angelegt ({AusgewaehltesProfil}).";
         Speichern();
-        AktualisiereWochenReport();
+        AktivisiereWochenReport();
     }
 
     private void ChargeLoeschen()
@@ -913,6 +913,16 @@ public class MainViewModel : ObservableObject
         var status = _berechnungService.BerechneStatus(stueck.Startgewicht, aktuell, charge.ZielverlustProzent, charge.Startdatum, standDatum);
 
         stueck.SetBerechneteWerte(aktuell, verlust, reifetage, tagesverlust, status);
+        AktualisiereVorherigesGewicht(stueck);
+    }
+
+    private static void AktualisiereVorherigesGewicht(Fleischstueck stueck)
+    {
+        var sortiert = stueck.Messungen.OrderBy(m => m.Datum).ToList();
+        for (var i = 0; i < sortiert.Count; i++)
+        {
+            sortiert[i].VorherigesGewicht = i == 0 ? stueck.Startgewicht : sortiert[i - 1].Gewicht;
+        }
     }
 
     private void AktualisiereChargeStatus(Charge charge)
@@ -1007,7 +1017,7 @@ public class MainViewModel : ObservableObject
         AktualisiereDiagramm();
     }
 
-    private void AktualisiereWochenReport()
+    private void AktivisiereWochenReport()
     {
         WochenReport.Clear();
 
@@ -1130,7 +1140,7 @@ public class MainViewModel : ObservableObject
 
     private void AktualisiereDiagramm()
     {
-        AktualisiereWochenReport();
+        AktivisiereWochenReport();
         ChartXAxisLabels.Clear();
         ChartYAxisLabels.Clear();
 

@@ -307,9 +307,9 @@
                               IsReadOnly="False"
                               RowEditEnding="MessungenGrid_RowEditEnding"
                               PreviewMouseWheel="DataGrid_PreviewMouseWheel"
-                              Height="300"
+                              Height="320"
                               FontSize="22"
-                              RowHeight="42"
+                              RowHeight="46"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
                               HeadersVisibility="Column"
@@ -317,13 +317,23 @@
                               BorderBrush="#444"
                               BorderThickness="1"
                               GridLinesVisibility="Horizontal">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IstKritisch}" Value="True">
+                                        <Setter Property="Background" Value="#4D1500" />
+                                        <Setter Property="Foreground" Value="#FF5722" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="110" />
-                            <DataGridTextColumn Header="Soll-Prozess" Binding="{Binding SollProzess}" Width="110" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Ist-Prozess" Binding="{Binding Prozess}" Width="110" />
-                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="110" />
-                            <DataGridTextColumn Header="Temperatur (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="110" />
-                            <DataGridTextColumn Header="Luftfeuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="120" />
+                            <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="155" />
+                            <DataGridTextColumn Header="Soll-Prozess" Binding="{Binding SollProzess}" Width="155" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Ist-Prozess" Binding="{Binding Prozess}" Width="155" />
+                            <DataGridTextColumn Header="Gewicht (g)" Binding="{Binding Gewicht, StringFormat=F0}" Width="155" />
+                            <DataGridTextColumn Header="Temp. (°C)" Binding="{Binding Temperatur, StringFormat=F1}" Width="140" />
+                            <DataGridTextColumn Header="Feuchte (%)" Binding="{Binding Luftfeuchte, StringFormat=F1}" Width="150" />
                             <DataGridTextColumn Header="Notiz" Binding="{Binding Notiz}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -382,7 +392,7 @@
 
         <!-- STATUS BAR -->
         <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Background="#1A1A1A" CornerRadius="4" Padding="12,8">
-            <TextBlock Text="{Binding Statusmeldung}" Foreground="#6EB7FF" FontSize="12" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Statusmeldung}" Foreground="#6EB7FF" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
         </Border>
     </Grid>
 </Window>

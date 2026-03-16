@@ -9,4 +9,19 @@ public class MessEintrag
     public string SollProzess { get; set; } = string.Empty;
     public string Prozess { get; set; } = string.Empty;
     public string Notiz { get; set; } = string.Empty;
+
+    public double VorherigesGewicht { get; set; }
+
+    public bool IstKritisch
+    {
+        get
+        {
+            if (VorherigesGewicht <= 0 || Gewicht <= 0)
+            {
+                return false;
+            }
+            var wochenVerlust = ((VorherigesGewicht - Gewicht) / VorherigesGewicht) * 100.0;
+            return wochenVerlust > 8.0;
+        }
+    }
 }
